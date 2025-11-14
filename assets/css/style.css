@@ -77,12 +77,12 @@
         margin-bottom: 16px;
         color: #009bc5;
     }
-      p.status i {
-        font-size: 8px;
-        font-family: 'Neue Haas Grotesk Display Pro';
-        font-weight: 700;
-        margin: 0;
-    }
+    p.status i {
+      font-size: 11px;
+      font-family: 'Neue Haas Grotesk Display Pro';
+      font-weight: 600;
+      margin: 0;
+  }
       
 
       
@@ -118,7 +118,7 @@
         font-family: 'Neue Haas Grotesk Display Pro';
     }
     .status-label {
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 700;
       font-family: 'Neue Haas Grotesk Display Pro';
     }
@@ -130,9 +130,9 @@
     }
       
     .status-sub {
-      font-size: 10px;
+      font-size: 11px;
       font-family: 'Neue Haas Grotesk Display Pro';
-      font-weight: 400;
+      font-weight: 600;
       color: #8E8E93;
       padding-top: 2px;
     }
@@ -193,9 +193,9 @@
       }
       
     .date {
-        font-size: 8px;
+        font-size: 10px;
         color: black;
-        font-weight: 300;
+        font-weight: 500;
         font-family: 'Neue Haas Grotesk Display Pro';
         gap: 2px;
         align-items: center;
@@ -216,10 +216,10 @@
       
       
     .text {
-        font-size: 10px;
+        font-size: 13px;
         font-family: 'Neue Haas Grotesk Display Pro';
         font-weight: 600;
-        width: 90%;
+        /* width: 90%; */
     }
       
       .link {
