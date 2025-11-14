@@ -552,3 +552,432 @@ a:hover {
     pointer-events: none;
     border-color: #ddd;
   }
+
+
+
+
+
+
+  /* ==================== RESPONSIVE MEDIA QUERIES ==================== */
+
+/* Tablets and smaller desktops (1024px and below) */
+@media(max-width: 1024px) {
+    .container {
+      padding: 16px;
+    }
+    
+    .title {
+      font-size: 2rem;
+      margin-bottom: 24px;
+    }
+    
+    .main-content .card h2 {
+      font-size: 24px;
+    }
+  }
+  
+  /* Mobile devices (768px and below) */
+  @media(max-width: 768px) {
+    body {
+      overflow-x: hidden;
+    }
+    
+    .container {
+      padding: 16px;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    
+    .title {
+      font-size: 1.75rem;
+      margin-bottom: 16px;
+      color: #009BC5;
+    }
+    
+    /* Reorganize grid layout for mobile */
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Mobile order: Tabs → Filters → Status Card → Activity Card → Table */
+    .main-content {
+      order: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .tabs {
+      order: 1;
+    }
+    
+    .filters {
+      order: 2;
+    }
+    
+    .sidebar {
+      order: 3;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .status-card {
+      order: 1;
+    }
+    
+    .activity-card {
+      order: 2;
+    }
+    
+    .providers-list {
+      order: 3;
+    }
+    
+    .table-container {
+      order: 4;
+    }
+    
+    .pagination-container {
+      order: 5;
+    }
+    
+ 
+    .status-card {
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .status-card h2 {
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    
+    .applications {
+        display: flex;
+        flex-direction: row;
+        gap: 0;
+        padding: 16px 0;
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .applications .number {
+      font-size: 48px;
+    }
+    
+    .applications .label {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    
+    .status-item {
+        padding: 0;
+        border-bottom: none !important;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    .custom-status-list{
+    display: flex;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 0px;
+    border-bottom: none !important;
+    justify-content: flex-start;
+    }
+
+    .status-list {
+        margin-top: 0px !important;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .status-item {
+      padding: 0;
+      border-bottom: none !important;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .status-number {
+      font-size: 32px;
+      margin-top: 8px;
+    }
+    
+    .status-label {
+      font-size: 13px;
+    }
+    
+    .status-sub {
+      font-size: 10px;
+      padding-top: 2px;
+    }
+    
+    .activity-card {
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .activity-card h2 {
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    
+    .activity-list {
+      max-height: none;
+    }
+    
+    .activity {
+      padding-left: 0;
+      gap: 10px;
+    }
+    
+    .dot {
+      width: 8px;
+      height: 8px;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+    
+    .text {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    
+    .date {
+      font-size: 10px;
+      margin-bottom: 6px;
+    }
+    
+    .status i {
+      font-size: 9px;
+    }
+    
+    /* Main content adjustments */
+    .main-content .card {
+      padding: 0;
+      border: none;
+      background: transparent;
+    }
+    
+    .providers-list h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+      padding: 0 16px;
+    }
+    
+    /* Tabs - horizontal scroll like image */
+    .tabs {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      gap: 8px;
+      margin-bottom: 16px;
+      -webkit-overflow-scrolling: touch;
+      /* padding: 0 16px; */
+      scrollbar-width: none;
+    }
+    
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .tab {
+      white-space: nowrap;
+      font-size: 12px;
+      padding: 10px 14px;
+      flex-shrink: 0;
+      border-radius: 20px;
+    }
+    
+    .tab i {
+      font-size: 14px;
+    }
+    
+
+    .filters {
+        flex-direction: column;
+        gap: 0;
+        padding: 0;
+        margin: 0 auto;
+        margin: 0 0px 16px 0px;
+        border-radius: 12px;
+    }
+    
+    .filters .filter {
+        /* border-bottom: 1px solid #e5e7eb; */
+        padding: 0;
+        width: -webkit-fill-available;
+    }
+    
+    .filters .filter .select-wrapper {
+      border-left: none;
+    }
+    
+    .select-wrapper {
+      border-bottom: 1px solid #e5e7eb;
+      width: 100%;
+    }
+    .custom-wrapper{
+        border-top-right-radius: 10px !important;
+    }
+    
+    .select-wrapper:last-of-type {
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .select-wrapper select {
+      border-right: none;
+      border-bottom: none;
+      padding: 16px 40px 16px 16px;
+      font-size: 13px;
+    }
+    
+    .filters .filter .select-wrapper select {
+      padding-left: 16px;
+    }
+    
+    .iconoir {
+      font-size: 20px;
+      padding: 16px;
+      display: none !important;
+    }
+    
+    .dropdown-icon {
+      right: 16px;
+      font-size: 12px;
+    }
+    
+    .reset {
+      padding: 16px;
+      justify-content: center;
+      font-size: 13px;
+    }
+    
+    .reset i {
+      font-size: 14px;
+    }
+    
+ 
+    .table-container {
+      /* margin: 0 16px; */
+      border-radius: 12px;
+    }
+    
+    table {
+      width: 100%;
+      font-size: 12px;
+    }
+    
+    th, td {
+        padding: 20px 11px;
+        font-size: 11px;
+    }
+    
+    th:first-child,
+    td:first-child {
+      padding-left: 16px;
+    }
+    
+    th:last-child,
+    td:last-child {
+      padding-right: 16px;
+    }
+    
+    .badge {
+      font-size: 0.65rem;
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+    
+    /* Make table scrollable horizontally if needed */
+    .table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+      min-width: 700px;
+    }
+    
+    /* Pagination */
+    .pagination-container {
+      margin: 16px 0;
+      padding: 0 16px;
+    }
+    
+    .pagination .page-item {
+      margin: 0 2px;
+    }
+    
+    .pagination .page-item a {
+      padding: 8px 11px;
+      font-size: 11px;
+    }
+    
+    .pagination .page-item.active a {
+      padding: 8px 12px;
+    }
+  }
+  
+  /* Small mobile devices (480px and below) */
+  @media(max-width: 480px) {
+    .container {
+      padding: 12px;
+    }
+    
+    .title {
+      font-size: 1.5rem;
+    }
+    
+    .tab {
+      font-size: 11px;
+      padding: 8px 12px;
+    }
+    
+    .applications .number {
+      font-size: 42px;
+    }
+    
+    .status-number {
+      font-size: 28px;
+    }
+    
+    .status-label {
+      font-size: 12px;
+    }
+    
+    .text {
+      font-size: 12px;
+    }
+    
+    .select-wrapper select {
+      font-size: 12px;
+      padding: 14px 35px 14px 14px;
+    }
+    
+    .reset {
+      font-size: 12px;
+    }
+    
+    th, td {
+        padding: 23px 16px;
+        font-size: 10px;
+    }
+    
+    .badge {
+      font-size: 0.6rem;
+      padding: 3px 6px;
+    }
+    
+    .pagination .page-item:not(.active):nth-child(n+6):nth-last-child(n+2) {
+      display: none;
+    }
+  }
+
+  
