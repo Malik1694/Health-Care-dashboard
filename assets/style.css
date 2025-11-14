@@ -1,8 +1,5 @@
 @import url('https://fonts.cdnfonts.com/css/neue-haas-grotesk-display-pro');
-@font-face {
-    font-family:'';
-    src: url();
-}
+
 /* Basic Reset */
 
 * {
@@ -17,22 +14,19 @@
     color: #333;
   }
   
-  /* Container */
   .container {
     max-width: 1460px;
     margin: auto;
     padding: 24px;
 }
   
-  /* Titles */
   .title {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #009BC5; /* primary */
+    color: #009BC5; 
     margin-bottom: 32px;
   }
   
-  /* Grid */
   .grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -45,7 +39,6 @@
     }
   }
   
-  /* Cards */
   .card {
     background: #fff;
     border-radius: 12px;
@@ -61,14 +54,12 @@
   padding: 24px;
 
 }
-  /* Sidebar */
   .sidebar {
     display: flex;
     flex-direction: column;
     gap: 24px;
   }
   
-  /* Status Card */
   .status-card h2 {
     font-size: 14px;
     font-weight: 600;
@@ -142,7 +133,6 @@
   .destructive { color: #dc2626; }
   .warning { color: #f59e0b; }
   
-  /* Activity Card */
   .activity-card h2 {
     font-size: 14px;
     font-family: 'Neue Haas Grotesk Display Pro';
@@ -198,7 +188,6 @@
     margin-bottom: 4px;
 }
 
-  /* Add clock icon before the text */
   .date::before {
     content: "";
     display: inline-block;
@@ -223,15 +212,12 @@
     text-decoration: underline;
   }
   
-  /* Main Content */
   .main-content .card h2 {
     font-size: 32px;
     font-family: 'Neue Haas Grotesk Display Pro';
     font-weight: 700;
     margin-bottom: 20px;
 }
-  /* Tabs container */
-/* Tabs container */
 .tabs {
   display: flex;
   flex-wrap: wrap;
@@ -239,7 +225,6 @@
   margin-bottom: 24px;
 }
 
-/* Tab buttons */
 .tab {
   position: relative;
   font-size: 14px;
@@ -256,8 +241,6 @@
   transition: all 0.5s ease-in-out;
   overflow: hidden;
 }
-
-/* Tab icons */
 .tab i {
   vertical-align: middle;
   margin-right: 4px;
@@ -268,7 +251,6 @@
   transition: color 0.3s ease;
 }
 
-/* Shimmer effect for active tab hover */
 .tab.active::before {
   content: '';
   position: absolute;
@@ -278,26 +260,23 @@
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
   transition: left 0.5s ease;
-  pointer-events: none; /* allows click through */
+  pointer-events: none; 
 }
 
 .tab.active:hover::before {
   left: 100%;
 }
 
-/* Hover effect for all tabs */
 .tab:hover {
   background: #009BC5;
   color: #fff;
 }
 
-/* Active state */
 .tab.active {
   color: #fff;
   background-color: #009BC5;
 }
 
-/* Filters container */
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -313,16 +292,14 @@
   border-left: 1px solid #e5e7eb;
 }
 
-/* Each filter/select button takes equal space */
 .filters .filter,
 .filters select,
 .filters .reset {
   
-  flex: 1; /* all items expand equally */
-  min-width: 120px; /* optional: prevents them from being too small */
+  flex: 1; 
+  min-width: 120px;
 }
 
-/* Filter block (icon + first select) */
 .filters .filter {
   display: flex;
   align-items: center;
@@ -343,16 +320,14 @@
   background-color: #f9f9fb;
   cursor: pointer;
   width: 100%;
-
-
-
-}/* Make wrapper relative for absolute arrow positioning */
-.select-wrapper {
-  position: relative;
-  flex: 1; /* keeps equal spacing like your existing layout */
 }
 
-/* Select styling */
+
+.select-wrapper {
+  position: relative;
+  flex: 1; 
+}
+
 .select-wrapper select {
   width: 100%;
   padding: 26px 11px 27px 35px;
@@ -364,7 +339,6 @@
   font-size: 14px;
   font-weight: 700;
 }
-/* Font Awesome arrow */
 .select-wrapper .dropdown-icon {
   position: absolute;
   right: 30px;
@@ -375,11 +349,6 @@
   font-size: 15px;
 }
 
-
-
-
-
-/* Reset button */
 .reset {
     background: none;
     border: none;
@@ -398,12 +367,10 @@
   font-size: 16px;
 }
 
-/* Hover effect for reset button */
 .reset:hover {
   color: #fe9898;
 }
 
-  /* Table */
 .table-container {
     overflow-x: auto;
     border: 0.2px solid #e5e7eb;
@@ -425,8 +392,8 @@
 
 table {
     width: 100%;
-    border-collapse: separate; /* allows spacing between cells */
-    border-spacing: 0 0px; /* vertical gap between rows */
+    border-collapse: separate; 
+    border-spacing: 0 0px; 
 }
 th, td {
   text-align: left;
@@ -445,9 +412,6 @@ th {
 tbody tr{
   border: 1px solid black;
 }
-
-
-/* Alternating row colors */
 tbody tr:nth-child(odd) td {
   background-color: #f9f9f9;
   border-bottom: 1px solid #cbd5e1;
@@ -455,11 +419,11 @@ tbody tr:nth-child(odd) td {
 }
 
 tbody tr:nth-child(even) td {
-    background-color: #ffffff; /* white for even rows */
+    background-color: #ffffff; 
 }
 
 tr:hover td {
-    background-color: #f3f4f6; /* hover background */
+    background-color: #f3f4f6; 
 }
 
 /* a {
@@ -471,7 +435,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Badges */
 .badge {
     padding: 4px 8px;
     border-radius: 8px;
@@ -499,9 +462,6 @@ a:hover {
     background: #fef9ee;
     color: #f59e0b;
 }
-
-
-  
 
 .pagination-container {
     text-align: center;
@@ -558,9 +518,8 @@ a:hover {
 
 
 
-  /* ==================== RESPONSIVE MEDIA QUERIES ==================== */
-
-/* Tablets and smaller desktops (1024px and below) */
+  /* RESPONSIVE MEDIA QUERIES  */
+/*  (1024px and below) */
 @media(max-width: 1024px) {
     .container {
       padding: 16px;
@@ -594,7 +553,6 @@ a:hover {
       color: #009BC5;
     }
     
-    /* Reorganize grid layout for mobile */
     .grid {
       grid-template-columns: 1fr;
       gap: 16px;
@@ -720,9 +678,11 @@ a:hover {
     }
     
     .activity-card {
-      padding: 20px;
-      background-color: #fff;
-      border: 1px solid #e5e7eb;
+        padding: 20px;
+        overflow-y: auto;
+        background-color: #fff;
+        border: 1px solid #e5e7eb;
+        max-height: 300px;
     }
     
     .activity-card h2 {
@@ -735,15 +695,15 @@ a:hover {
     }
     
     .activity {
-      padding-left: 10px;
-      gap: 10px;
+        padding: 6px 10px;
+        gap: 10px;
     }
     
     .dot {
-      width: 8px;
-      height: 8px;
-      margin-top: 6px;
-      flex-shrink: 0;
+        width: 3px;
+        height: 3px;
+        margin-top: 30px;
+        flex-shrink: 0;
     }
     
     .text {
@@ -760,7 +720,6 @@ a:hover {
       font-size: 9px;
     }
     
-    /* Main content adjustments */
     .main-content .card {
       padding: 0;
       border: none;
@@ -773,7 +732,6 @@ a:hover {
       padding: 0 16px;
     }
     
-    /* Tabs - horizontal scroll like image */
     .tabs {
       overflow-x: auto;
       flex-wrap: nowrap;
@@ -811,7 +769,6 @@ a:hover {
     }
     
     .filters .filter {
-        /* border-bottom: 1px solid #e5e7eb; */
         padding: 0;
         width: -webkit-fill-available;
     }
@@ -866,7 +823,6 @@ a:hover {
     
  
     .table-container {
-      /* margin: 0 16px; */
       border-radius: 12px;
     }
     
@@ -896,7 +852,6 @@ a:hover {
       white-space: nowrap;
     }
     
-    /* Make table scrollable horizontally if needed */
     .table-container {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -906,7 +861,6 @@ a:hover {
       min-width: 700px;
     }
     
-    /* Pagination */
     .pagination-container {
       margin: 16px 0;
       padding: 0 16px;
@@ -926,7 +880,6 @@ a:hover {
     }
   }
   
-  /* Small mobile devices (480px and below) */
   @media(max-width: 480px) {
     .container {
       padding: 12px;
@@ -948,9 +901,9 @@ a:hover {
     .status-number {
       font-size: 28px;
     }
-    
     .status-label {
-      font-size: 12px;
+        font-size: 12px;
+        width: 140px;
     }
     
     .text {
