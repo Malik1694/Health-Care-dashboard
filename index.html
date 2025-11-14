@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="assets\css\style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide/dist/lucide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@main/css/iconoir.css" />
+
+
+
+
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">WELCOME, [NAME]</h1>
+
+    <div class="grid">
+      <!-- Left Sidebar -->
+      <aside class="sidebar">
+        <!-- Status Card -->
+        <div class="card status-card">
+          <h2>Status of Applications</h2>
+          <div class="applications">
+            <div class="status-item">
+              <div>
+              <p class="label">Applications Submitted</p>
+              <p class="status-sub">Since last 30 days</p>
+              </div>
+              <p class="number">42</p>
+            </div>
+            <div class="status-list">
+              <div class="status-item success">
+                <div>
+                  <p class="status-label">Approved</p>
+                  <p class="status-sub">Since last 30 days</p>
+                </div>
+                <p class="status-number">25</p>
+              </div>
+              <div class="status-item info">
+                <div>
+                  <p class="status-label">Awaiting Acknowledgment</p>
+                  <p class="status-sub">Since last 30 days</p>
+                </div>
+                <p class="status-number">08</p>
+              </div>
+              <div class="status-item destructive">
+                <div>
+                  <p class="status-label">Denied</p>
+                  <p class="status-sub">Since last 30 days</p>
+                </div>
+                <p class="status-number">06</p>
+              </div>
+              <div class="status-item warning">
+                <div>
+                  <p class="status-label">Follow-Up Required</p>
+                  <p class="status-sub">Since last 30 days</p>
+                </div>
+                <p class="status-number">03</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="card activity-card">
+          <h2>BHSD Activity Log</h2>
+          <div class="activity-list">
+            <div class="activity">
+              <div class="dot"></div>
+              <div class="activity-log">
+                <p class="date">Oct 8, 2024 - 6:04 PM</p>
+                <p class="text">Document viewed by Phil Huston - kim.rogge.rogers@gmail.com (viewed)</p>
+                <p class="status"> <i>Status: <span> Viewed successfully.</span></i></p>
+              </div>
+            </div>
+            <div class="activity">
+              <div class="dot"></div>
+              <div class="activity-log">
+                <p class="date">Oct 8, 2024 - 5:48 PM</p>
+                <p class="text">Document viewed by Phil Huston - kim.rogge.rogers@gmail.com (viewed)</p>
+                <p class="status"> <i>Status: <span> Viewed successfully.</span></i></p>
+              </div>
+            </div>
+            <div class="activity">
+              <div class="dot"></div>
+              <div class="activity-log">
+                <p class="date">Oct 8, 2024 - 5:47 PM</p>
+                <p class="text">Document viewed by Phil Huston - kim.rogge.rogers@gmail.com (viewed)</p>
+                <p class="status"> <i>Status: <span> Viewed successfully.</span></i></p>
+              </div>
+            </div>
+            <div class="activity">
+              <div class="dot"></div>
+              <div class="activity-log">
+                <p class="date">Oct 8, 2024 - 5:47 PM</p>
+                <p class="text">Document viewed by Phil Huston - kim.rogge.rogers@gmail.com (viewed)</p>
+                <p class="status"> <i>Status: <span> Viewed successfully.</span></i></p>
+              </div>
+            </div>
+            <div class="activity">
+              <div class="dot"></div>
+              <div class="activity-log">
+                <p class="date">Oct 8, 2024 - 5:47 PM</p>
+                <p class="text">Document viewed by PM Hudson - URL https://openSignal.com/ (viewed)</p>
+                <p class="status"> <i>Status: <span> Viewed successfully.</span></i></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="card main-card">
+          <!-- Tabs -->
+          <div class="tabs">
+            <button class="tab active"><i class="fa-solid fa-eye"></i> View All</button>
+            <button class="tab">AARTC</button>
+            <button class="tab">ACT</button>
+            <button class="tab">CCBHC</button>
+            <button class="tab">CCSS</button>
+            <button class="tab">IOP</button>
+            <button class="tab">MCT</button>
+            <button class="tab">OPRE</button>
+            <button class="tab">PSR</button>
+          </div>
+          
+          <div class="providers-list">
+            <h2>Providers Lists</h2>
+          </div>
+<!-- Filters -->
+<div class="filters">
+  <!-- Filter with icon + select -->
+  <div class="filter">
+    <i class="iconoir iconoir-filter-alt"></i>
+    <div class="select-wrapper custom-wrapper">
+      <select>
+        <option>Most Recent</option>
+        <option>Oldest</option>
+      </select>
+      <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+    </div>
+  </div>
+
+  <div class="select-wrapper">
+    <select>
+      <option>All Status</option>
+      <option>Approved</option>
+      <option>Acknowledged</option>
+      <option>Denied</option>
+    </select>
+    <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+  </div>
+
+  <div class="select-wrapper">
+    <select>
+      <option>All Types</option>
+      <option>CCSS</option>
+    </select>
+    <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+  </div>
+
+  <button class="reset">
+    <i class="fa-solid fa-rotate-left"></i> Reset Filter
+  </button>
+</div>
+
+          <!-- Table -->
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Agency</th>
+                  <th>Type</th>
+                  <th>Contact Name</th>
+                  <th>Email</th>
+                  <th>Date Submitted</th>
+                  <th>Status</th>
+                  <th>Time Trigger</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#">A Path With Heart Counseling</a></td>
+                  <td>CCSS</td>
+                  <td>Malik Johnson</td>
+                  <td>aisha.k@examplepathwellness.com</td>
+                  <td>Oct 14, 2025</td>
+                  <td><span class="badge success">Approved</span></td>
+                  <td>5 days left</td>
+                </tr>
+                <tr>
+                  <td><a href="#">ReyaCare Foundation</a></td>
+                  <td>CCSS</td>
+                  <td>Malik Johnson</td>
+                  <td>aisha.k@examplepathwellness.com</td>
+                  <td>Oct 14, 2025</td>
+                  <td><span class="badge info">Acknowledged</span></td>
+                  <td>5 days left</td>
+                </tr>
+                <tr>
+                  <td><a href="#">ReyaCare Foundation</a></td>
+                  <td>CCSS</td>
+                  <td>Malik Johnson</td>
+                  <td>aisha.k@examplepathwellness.com</td>
+                  <td>Oct 14, 2025</td>
+                  <td><span class="badge destructive">Denied</span></td>
+                  <td>5 days left</td>
+                </tr>
+                <tr>
+                  <td><a href="#">BrightCare Foundation</a></td>
+                  <td>CCSS</td>
+                  <td>Malik Johnson</td>
+                  <td>aisha.k@examplepathwellness.com</td>
+                  <td>Oct 14, 2025</td>
+                  <td><span class="badge warning">Follow-up</span></td>
+                  <td>5 days left</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+        <nav class="pagination-container" aria-label="Page navigation">
+          <ul class="pagination">
+            <li class="page-item disabled"><a href="#">&laquo;</a></li>
+            <li class="page-item active"><a href="#">1</a></li>
+            <li class="page-item"><a href="#">2</a></li>
+            <li class="page-item"><a href="#">3</a></li>
+            <li class="page-item"><a href="#">4</a></li>
+            <li class="page-item"><a href="#">5</a></li>
+            <li class="page-item"><a href="#">&raquo;</a></li>
+          </ul>
+        </nav>
+        
+      </main>
+    </div>
+  </div>
+
+
+
+</body>
+</html>
