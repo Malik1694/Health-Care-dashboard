@@ -77,10 +77,10 @@
     margin-bottom: 16px;
     color: #009bc5;
 }
-  p.status i {
-    font-size: 8px;
+.status i {
+    font-size: 10px;
     font-family: 'Neue Haas Grotesk Display Pro';
-    font-weight: 700;
+    font-weight: 600;
     margin: 0;
 }
   
@@ -112,29 +112,24 @@
   
 }
     .applications .label {
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 700;
     color: #000000;
     font-family: 'Neue Haas Grotesk Display Pro';
 }
 .status-label {
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 700;
   font-family: 'Neue Haas Grotesk Display Pro';
 }
-.applications .label {
-    font-size: 12px;
-    font-weight: 700;
-    color: #000000;
-    font-family: 'Neue Haas Grotesk Display Pro';
-}
+
   
 .status-sub {
-  font-size: 10px;
-  font-family: 'Neue Haas Grotesk Display Pro';
-  font-weight: 400;
-  color: #8E8E93;
-  padding-top: 2px;
+    font-size: 11px;
+    font-family: 'Neue Haas Grotesk Display Pro';
+    font-weight: 600;
+    color: #8E8E93;
+    padding-top: 2px;
 }
   
 .status-number {
@@ -182,20 +177,20 @@
   
  
   .activity:nth-child(odd) .dot {
-    background: #399e2d; 
-    box-shadow: 0 0 5px 4px #77c16e;
-  }
+    background: #399e2d;
+    box-shadow: 0 0 7px 5px #77c16e;
+}
   
 
   .activity:nth-child(even) .dot {
     background: #EB8923; 
-    box-shadow: 0 0 5px 4px #eea558;
+    box-shadow: 0 0 7px 5px #eea558;
   }
   
-.date {
-    font-size: 8px;
+  .date {
+    font-size: 10px;
     color: black;
-    font-weight: 300;
+    font-weight: 500;
     font-family: 'Neue Haas Grotesk Display Pro';
     gap: 2px;
     align-items: center;
@@ -213,19 +208,14 @@
     background-size: contain;
 }
 
-
-  
-  
 .text {
-    font-size: 10px;
+    font-size: 13px;
     font-family: 'Neue Haas Grotesk Display Pro';
     font-weight: 600;
-    width: 90%;
+    /* width: 90%; */
 }
-  
   .link {
     font-size: 0.75rem;
-    color: #1d4ed8;
     text-decoration: none;
   }
   
@@ -422,8 +412,9 @@
 }
 
 .table-container a {
-  color: #36383a;
-  transition: all 0.3s ease-in-out;
+    color: #36383a;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
 }
 
 .table-container a:hover {
@@ -471,10 +462,10 @@ tr:hover td {
     background-color: #f3f4f6; /* hover background */
 }
 
-a {
+/* a {
     color: #1d4ed8;
     text-decoration: none;
-}
+} */
 
 a:hover {
     text-decoration: underline;
@@ -543,17 +534,18 @@ a:hover {
 }
   
   .pagination .page-item a:hover {
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
+    background-color: #009BC5;
+    color: #fff !important;
+    border-color: #009BC5;
   }
   
   .pagination .page-item.active a {
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
+    background-color: #009BC5;
+    color: #fff ;
+    border-color: #009BC5;
     cursor: default;
-  }
+    padding: 10px 15px;
+}
   
   .pagination .page-item.disabled a {
     color: #aaa;
