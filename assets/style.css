@@ -271,6 +271,10 @@
   color: #fff;
   background-color: #009BC5;
 }
+.select-wrapper select:focus {
+    border:1px solid #ddd;
+    outline: none; 
+  }
 
 .filters {
   display: flex;
@@ -395,9 +399,10 @@ th, td {
   font-size: 14px;
   font-weight: 500;
   font-family: 'Neue Haas Grotesk Display Pro';
-  padding: 18px 25px;
+  padding: 18px 25px !important;
   background-color: #fff;
 }
+
 th {
   border-bottom: 1px solid #cbd5e1;
   font-weight: 700;
@@ -500,6 +505,14 @@ a:hover {
     border-color: #009BC5;
     cursor: default;
     padding: 10px 15px;
+    
+}
+.pagination .page-item.active a:hover {
+    background-color: #009BC5;
+    color: #fff ;
+    border-color: #009BC5;
+    cursor: default;
+    padding: 10px 15px;
 }
   
   .pagination .page-item.disabled a {
@@ -510,12 +523,11 @@ a:hover {
  /* RESPONSIVE MEDIA QUERIES  */
 /*  (1024px and below) */
 
-  @media(min-width: 1024px) {
+/* Medium Desktop / Large Tablet: 1025px – 1239px */
+@media (min-width: 1025px) {
     .grid {
-      grid-template-columns: 1fr 3fr;
+        grid-template-columns: 1fr 3fr !important;
     }
-  }
-@media(max-width: 1024px) {
     .container {
         padding: 16px;
       }
@@ -528,12 +540,14 @@ a:hover {
       .main-content .card h2 {
         font-size: 24px;
       }
-      
-      .grid {
-        grid-template-columns: 340px 1fr;
-        gap: 20px;
+      .select-wrapper select:focus {
+        border:1px solid #ddd;
+        outline: none; 
       }
-      
+      .grid {
+        grid-template-columns: 250px 1fr;
+        gap: 20px;
+    }
       .status-card,
       .activity-card {
         padding: 20px;
@@ -547,6 +561,56 @@ a:hover {
         padding: 14px 18px;
         font-size: 13px;
       }
+    
+}
+
+@media(max-width: 1024px) {
+    .container {
+        padding: 16px;
+      }
+      .grid {
+        display: grid;
+        overflow-wrap: anywhere;
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+      
+      .title {
+        font-size: 2rem;
+        margin-bottom: 24px;
+      }
+      
+      .main-content .card h2 {
+        font-size: 24px;
+      }
+      .select-wrapper select:focus {
+        border:1px solid #ddd;
+        outline: none; 
+      }
+      /* .grid {
+        grid-template-columns: 340px 1fr;
+        gap: 20px;
+      } */
+      
+      .status-card, .activity-card {
+        padding: 20px;
+        width: -webkit-fill-available;
+    }
+      
+      .main-content .card.main-card {
+        /* padding: 20px; */
+      }
+      
+      th, td {
+        padding: 14px 18px;
+        font-size: 13px;
+      }
+      .sidebar {
+        display: flex;
+        justify-content: space-between;
+        flex-flow: wrap;
+        max-width: 100%;
+    }
     }
     
   
@@ -592,7 +656,7 @@ a:hover {
     .sidebar {
       order: 3;
       display: flex;
-      flex-direction: column;
+      /* flex-direction: column; */
       gap: 16px;
     }
     
@@ -646,6 +710,10 @@ a:hover {
       font-size: 15px;
       margin-bottom: 4px;
     }
+    .select-wrapper select:focus {
+        border:1px solid #ddd;
+        outline: none; 
+      }
     
     .status-item {
         padding: 0;
@@ -955,6 +1023,12 @@ a:hover {
     .pagination .page-item:not(.active):nth-child(n+6):nth-last-child(n+2) {
       display: none;
     }
+
+    .select-wrapper select:focus {
+        border:1px solid #ddd;
+        outline: none; 
+      }
   }
 
+  
   
