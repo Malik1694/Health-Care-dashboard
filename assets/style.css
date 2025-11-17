@@ -375,7 +375,14 @@
     border: 0.2px solid #e5e7eb;
     border-radius: 14px;
     
+    
 }
+/* Optional: thin scrollbar */
+.table-container::-webkit-scrollbar {
+    
+}
+
+
 
 .table-container a {
     color: #36383a;
@@ -602,9 +609,10 @@ a:hover {
       }
       
       th, td {
-        padding: 14px 18px;
-        font-size: 13px;
-      }
+        padding: 25px 7px !important;
+        font-size: 10px;
+        font-weight: 700;
+    }
       .sidebar {
         display: flex;
         justify-content: space-between;
@@ -881,7 +889,7 @@ a:hover {
     }
     
     .filters .filter .select-wrapper select {
-      padding-left: 16px;
+      /* padding-left: 16px */
     }
     
     .iconoir {
@@ -916,8 +924,8 @@ a:hover {
     }
     
     th, td {
-        padding: 20px 11px;
-        font-size: 11px;
+        padding: 25px 8px !important;
+        font-size: 10px;
     }
     
     th:first-child,
@@ -944,6 +952,35 @@ a:hover {
     table {
       min-width: 700px;
     }
+    .table-container {
+        overflow-x: auto;
+        border: 0.2px solid #e5e7eb;
+        border-radius: 14px;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        
+    }
+    .table-container::-webkit-scrollbar {
+        height: 6px !important;
+    }
+    
+    .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .table-container::-webkit-scrollbar-thumb {
+        background: #b5b5b5;
+        border-radius: 10px;
+    }
+    
+    .table-container::-webkit-scrollbar-thumb:hover {
+        background: #999;
+    }
+    
+    
+    
+    
     
     .pagination-container {
       margin: 16px 0;
@@ -987,7 +1024,9 @@ a:hover {
     }
     
     .status-number {
-      font-size: 28px;
+        font-size: 28px;
+        display: flex;
+        white-space: nowrap;
     }
     .status-label {
         font-size: 12px;
@@ -997,6 +1036,16 @@ a:hover {
     .text {
       font-size: 12px;
     }
+
+    .select-wrapper .dropdown-icon {
+    position: absolute;
+    right: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #36383a;
+    font-size: 15px;
+}
     
     .select-wrapper select {
       font-size: 12px;
@@ -1008,7 +1057,7 @@ a:hover {
     }
     
     th, td {
-        padding: 23px 16px;
+            padding: 23px 9px !important;
         font-size: 10px;
     }
     
@@ -1028,7 +1077,37 @@ a:hover {
         border:1px solid #ddd;
         outline: none; 
       }
-  }
 
+
+
+.table-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
   
+  .table-container::-webkit-scrollbar {
+    height: 10px;
+  }
   
+  .table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+  .table-container {
+    scrollbar-width: thin !important;
+    scrollbar-color: #888 #f1f1f1;
+  } 
+    
+    
+    
+}
