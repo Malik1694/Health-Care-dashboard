@@ -559,10 +559,10 @@ a:hover {
       .activity-card {
         padding: 20px;
       }
-      
       .main-content .card.main-card {
         padding: 20px;
-      }
+        display: grid;
+    }
       
       th, td {
         padding: 14px 18px;
