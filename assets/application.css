@@ -248,7 +248,7 @@ background-color: #f9f9fb;
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  margin: 15px 0px !important;
 }
 
 .action-buttons .tab {
@@ -266,7 +266,12 @@ background-color: #f9f9fb;
 }
 
 .action-buttons .tab:hover {
-  background: #EB8923;
+  background: #009BC5;
+  color: #fff;
+  border-color: #BCBCBC;
+}
+.document-tab:hover{
+  background: #d97706 !important;
   color: #fff;
   border-color: #BCBCBC;
 }
@@ -494,7 +499,7 @@ h3 {
 
 .field-label {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 500;
   color: #222;
   margin-bottom: 8px;
   display: block;
@@ -711,7 +716,7 @@ input[type="text"] {
   font-size: 14px;
   color: #202224;
   margin-bottom: 4px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .upload-box span {
@@ -757,7 +762,7 @@ input[type="text"] {
   font-size: 14px;
   color: #333;
   margin-bottom: 12px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .btn-yes,
@@ -798,14 +803,14 @@ input[type="text"] {
 }
 
 .supporting-document-upload h3 {
-  font-size: 18px;
-  color: #075985;
+  font-size: 32px;
+  color: #009BC5;
   margin-bottom: 16px;
 }
 
 .btn-submit {
   padding: 12px 32px;
-  background: #16a34a;
+  background: #80C342;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -974,7 +979,7 @@ button:hover {
 }
 
 .btn-solid-green {
-  background: #84cc16;
+  background: #80C342;
   border: 1px solid #84cc16;
   color: #fff;
 }
