@@ -999,10 +999,7 @@ button:hover {
     grid-template-columns: 1fr;
   }
 
-  .table-header,
-  .table-row {
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  }
+ 
 
   .upload-area {
     grid-template-columns: 1fr;
@@ -1013,7 +1010,26 @@ button:hover {
   .container {
     padding: 16px;
   }
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 100% !important;
+    max-width: 320px;
+}
 
+.what-to-do-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-family: helvetica neue;
+  font-weight: 400;
+  color: #009BC5;
+  flex: 1;
+  /* width: 50%; */
+}
   .title {
     font-size: 1.5rem;
   }
@@ -1023,14 +1039,14 @@ button:hover {
   }
 
   .table-row {
-    grid-template-columns: 1fr;
+    overflow-x: auto;
     gap: 8px;
     padding: 12px;
   }
 
   .table-cell {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
   }
 
   .table-cell::before {
@@ -1052,7 +1068,7 @@ button:hover {
   .document-item,
   .what-to-do-item {
     flex-direction: column;
-    align-items: flex-start;
+    /* align-items: flex-start; */
     gap: 12px;
   }
 
