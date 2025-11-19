@@ -132,20 +132,20 @@ a {
 }
 
 .tab {
-    position: relative;
-    font-size: var(--font-size-md); /* 14px */
-    font-weight: 700;
-    font-family: var(--font-main);
-    padding: 9px 11px;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
-    background: var(--bg-surface);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.5s ease-in-out;
-    overflow: hidden;
+  position: relative;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  font-family: var(--font-main);
+  padding: 10px 20px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.5s ease-in-out;
+  overflow: hidden;
 }
 
 .tab:hover {
@@ -271,6 +271,15 @@ a {
     align-items: center;
 }
 
+/* The specific layout for the 'Applications Submitted' total row */
+.applications .custom-status-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 4px solid var(--color-text-main); /* Unique separator for the total */
+    padding-bottom: 10px;
+}
+
 .status-label {
     font-size: var(--font-size-lg); /* 15px */
     font-weight: 700;
@@ -348,9 +357,22 @@ a {
     background-size: contain;
 }
 
+.activity-log {
+     /* ensures text wraps correctly without overflow */
+    word-break: break-word; 
+}
+
 .text {
     font-size: var(--font-size-sm); /* 13px */
     font-weight: 600;
+}
+.status {
+    font-size: var(--font-size-xs); /* 12px */
+    color: var(--color-text-light);
+}
+.status span {
+    font-weight: 700;
+    color: var(--color-primary);
 }
 
 /* --- Filters Toolbar --- */
@@ -484,13 +506,13 @@ th {
 }
 
 tbody tr td {
-    background-color: var(--bg-surface);
+    background-color: var(--bg-surface); /* Should be white */
     border-bottom: 1px solid #e2e8f0;
 }
 
 tbody tr.highlight-row td {
-    background-color: var(--bg-hover);
-    border-top: 1px solid #e2e8f0;
+    background-color: var(--bg-hover) !important; 
+    border-top: 1px solid #e2e8f0; 
     border-bottom: 1px solid #e2e8f0;
 }
 
@@ -501,18 +523,13 @@ tbody tr.highlight-row td {
 /* Medium Desktop / Large Tablet: 1025px – 1239px */
 @media (min-width: 1025px) {
     .grid {
-        grid-template-columns: 1fr 3fr !important;
+        grid-template-columns: 250px 1fr !important;
+        gap: 20px;
     }
     .container { padding: 16px; }
     .title { font-size: var(--font-size-h2); margin-bottom: 24px; } /* 2rem */
     .main-content .card h2 { font-size: var(--font-size-xl); } /* 20px */
-    .main-content{
-      display: grid;
-    }
-    .grid {
-        grid-template-columns: 250px 1fr;
-        gap: 20px;
-    }
+
     .status-card, .activity-card { padding: 20px; }
     .main-content .card.main-card { display: grid; }
     th { padding: 14px 18px; font-size: var(--font-size-lg) ; font-weight: 700; } 
@@ -582,7 +599,7 @@ tbody tr.highlight-row td {
       overflow-y: auto;
       max-height: 300px;
       background: #fff;
-  }
+    }
     .providers-list { order: 3; }
     .table-container { order: 4; }
     .pagination-container { order: 5; margin: 16px 0; padding: 0 16px; }
@@ -607,12 +624,18 @@ tbody tr.highlight-row td {
     }
     .custom-status-list {
       justify-content: flex-start;
-      flex-direction: column !important;
-      align-items: flex-start !important;
-  }
+      flex-direction: row !important; /* Reverting to row for mobile status list */
+      align-items: center !important;
+      gap: 16px; /* Added gap for spacing between text and number */
+    }
+    /* Specific fix for the total application row */
+    .applications .custom-status-list {
+        flex-direction: row !important;
+    }
+    
     .status-list { margin-top: 0px !important; }
     .status-number { font-size: 32px; }
-    .status-label { font-size: var(--font-size-sm); width: 200px; } /* 13px */
+    .status-label { font-size: var(--font-size-sm); } /* 13px */
     .status-sub { font-size: var(--font-size-table-mobile); } /* 10px */
 
     /* Activity */
@@ -695,8 +718,15 @@ tbody tr.highlight-row td {
     .status-number { font-size: 28px; white-space: nowrap; }
     .status-label {
       font-size: var(--font-size-xs);
-      width: 109px;
-  }
+      width: auto;
+    }
+    .status-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .applications .custom-status-list {
+        flex-direction: row !important;
+    }
     .text { font-size: var(--font-size-xs); } /* 12px */
     .select-wrapper .dropdown-icon { right: 9px; }
     .select-wrapper select { font-size: var(--font-size-xs); padding: 14px 35px 14px 14px; } /* 12px */
