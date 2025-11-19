@@ -856,6 +856,7 @@ input[type="text"] {
 .doc-header-bar {
   background-color: #1f2937;
   padding: 12px 20px;
+  color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -909,7 +910,7 @@ input[type="text"] {
 }
 
 .page-break {
-  text-align: center;
+  text-align: start;
   color: #9ca3af;
   font-size: 11px;
   margin: 20px 0;
@@ -936,7 +937,9 @@ input[type="text"] {
 }
 
 .doc-paper li {
-  margin-bottom: 6px;
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: 600;
   color: #4b5563;
 }
 
