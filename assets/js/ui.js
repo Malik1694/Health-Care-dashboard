@@ -1,169 +1,453 @@
-  // State variable to track which Tab is currently active
-  let currentActiveTab = 'all';
+// State variable to track which Tab is currently active
+let currentActiveTab = 'all';
 
-  // --- 1. RUN ON PAGE LOAD ---
-  document.addEventListener('DOMContentLoaded', function() {
-      // This runs the master filter immediately so colors appear right away
-      applyFilters();
-  });
+// --- Global DOM element references and NEW State Variables ---
+const dateRangeToggle = document.getElementById('dateRangeToggle');
+const dateRangePopover = document.getElementById('dateRangePopover');
+const dateRangeApply = document.getElementById('dateRangeApply');
+const dateRangeClear = document.getElementById('dateRangeClear');
+const calendarContainer = document.getElementById('calendarContainer');
+const dateRangeDisplay = document.getElementById('dateRangeDisplay');
 
-  // --- 2. Tab Click Logic ---
-  function filterTabs(event, category) {
-      // Update Visual Tabs
-      var tabs = document.getElementsByClassName("tab");
-      for (var i = 0; i < tabs.length; i++) {
-          tabs[i].classList.remove("active");
-      }
-      event.currentTarget.classList.add("active");
+// 🎯 COMPLEX CALENDAR STATE: Used for the single-calendar range selection
+let selectedStartDate = null;
+let selectedEndDate = null;
+let currentCalendarDate = new Date(); // Tracks the currently displayed month/year
 
-      // ✨ FIX 1: Synchronize the 'All Types' dropdown with the clicked tab
-      const typeSelect = document.getElementById('typeSelect');
-      typeSelect.value = category; // Set the dropdown value to the category (e.g., 'AARTC' or 'all')
 
-      // Update State & Run Filter
-      currentActiveTab = category;
-      applyFilters();
-  }
+// --- 1. RUN ON PAGE LOAD (Event Listeners & Initial Filter) ---
+document.addEventListener('DOMContentLoaded', function() {
+    // This runs the master filter immediately so colors appear right away
+    applyFilters();
+    
+    // 🎯 NEW: Render the calendar on page load
+    renderCalendar();
 
-  // --- 3. Master Filter (Shows/Hides Rows) ---
-  function applyFilters() {
-      // NOTE: Because of FIX 1, the typeFilter value is now automatically updated 
-      // when a tab is clicked, ensuring tabs and dropdowns match.
-      const statusFilter = document.getElementById('statusSelect').value.toLowerCase();
-      const typeFilter = document.getElementById('typeSelect').value;
-      
-      const tableBody = document.getElementById('tableBody');
-      const rows = Array.from(tableBody.getElementsByTagName('tr'));
+    // --- POPUP CONTROL LOGIC ---
+    
+    // Popover Toggle Logic: Open/close when clicking the main button
+    if (dateRangeToggle) {
+        dateRangeToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevents click on toggle from triggering outside-click listener
+            if (dateRangePopover) {
+                dateRangePopover.classList.toggle('hidden');
+                dateRangeToggle.classList.toggle('active');
+            }
+        });
+    }
 
-      rows.forEach(row => {
-          // A. Data Type Check
-          const rowType = row.getAttribute('data-type');
-          
-          // This check is now slightly redundant but kept for logic consistency 
-          // in case currentActiveTab is changed elsewhere.
-          const tabMatch = (currentActiveTab === 'all' || rowType === currentActiveTab);
+    // Close popover when clicking outside
+    document.addEventListener('click', (e) => {
+        if (dateRangePopover && dateRangeToggle && 
+            !dateRangePopover.contains(e.target) && !dateRangeToggle.contains(e.target)) {
+            dateRangePopover.classList.add('hidden');
+            dateRangeToggle.classList.remove('active');
+        }
+    });
 
-          // B. Status Badge Check (normalized to match filter options)
-          const badge = row.querySelector('.badge');
-          let badgeText = badge ? badge.innerText.toLowerCase() : '';
-          
-          // Normalize specific badge texts for filtering
-          if (badgeText.includes('acknowledged')) {
-              badgeText = 'acknowledged';
-          } else if (badgeText.includes('approved')) {
-              badgeText = 'approved';
-          } else if (badgeText.includes('denied')) {
-              badgeText = 'denied';
-          } else if (badgeText.includes('follow-up')) {
-              badgeText = 'follow-up';
-          }
-          
-          const statusMatch = (statusFilter === 'all' || badgeText === statusFilter);
+    // Apply Button Logic: Triggers filtering and closes popover
+    if (dateRangeApply) {
+        dateRangeApply.addEventListener('click', () => {
+            updateDateRangeDisplay(); 
+            applyFilters(); // Triggers the final filter
+            dateRangePopover.classList.add('hidden'); 
+            dateRangeToggle.classList.remove('active');
+        });
+    }
 
-          // C. Dropdown Type Check
-          // With FIX 1, typeFilter will equal currentActiveTab, so we only need to check typeFilter 
-          // against the row type to satisfy both tab and dropdown logic.
-          const typeMatch = (typeFilter === 'all' || rowType === typeFilter);
+    // Clear Button Logic: Resets dates, triggers filtering, and closes popover
+    if (dateRangeClear) {
+        dateRangeClear.addEventListener('click', () => {
+            selectedStartDate = null;
+            selectedEndDate = null;
+            
+            updateDateRangeDisplay(); 
+            renderCalendar(); // Rerender to show no selection
+            applyFilters();
+            dateRangePopover.classList.add('hidden'); 
+            dateRangeToggle.classList.remove('active');
+        });
+    }
 
-          // Apply Display Logic: Filter only using status and the synchronized type
-          if (statusMatch && typeMatch) {
-              row.style.display = ""; // Show
-          } else {
-              row.style.display = "none"; // Hide
-          }
-      });
+    // Initialize button text on load
+    updateDateRangeDisplay(); 
 
-      // Trigger Sort (this function contains the DOM detachment/re-attachment to reduce flicker)
-      sortRows();
-  }
+    // Add listeners for other dropdowns that trigger filters immediately on change
+    if (document.getElementById('statusSelect')) document.getElementById('statusSelect').addEventListener('change', applyFilters);
+    if (document.getElementById('typeSelect')) document.getElementById('typeSelect').addEventListener('change', applyFilters);
+    if (document.getElementById('sortSelect')) document.getElementById('sortSelect').addEventListener('change', sortRows); 
+});
 
-  // --- 4. Sorting Logic (Optimized for flicker reduction) ---
-  function sortRows() {
-      const sortValue = document.getElementById('sortSelect').value;
-      const tableBody = document.getElementById('tableBody');
-      
-      // **Optimization Step 1: Detach tableBody from the DOM**
-      const parent = tableBody.parentNode;
-      if (parent) {
-          parent.removeChild(tableBody);
-      }
+// --- NEW: COMPLEX CALENDAR LOGIC (State Management, Rendering, and Interaction) ---
 
-      const allRows = Array.from(tableBody.getElementsByTagName('tr'));
-      
-      // Separate visible and hidden rows AFTER filtering has occurred
-      const visibleRows = allRows.filter(row => row.style.display !== 'none');
-      const hiddenRows = allRows.filter(row => row.style.display === 'none');
-      
-      if (visibleRows.length > 0) {
-          // Sort the visible rows in memory
-          visibleRows.sort((a, b) => {
-              // Assuming Date is in the 5th column (index 4)
-              const dateA = new Date(a.cells[4].innerText);
-              const dateB = new Date(b.cells[4].innerText);
+// 1. Logic to handle selecting the start/end date when a day cell is clicked
+function handleDateClick(event) {
+    // 🛑 CRITICAL FIX: STOP THE CLICK FROM BUBBLING TO THE DOCUMENT LISTENER
+    // This ensures the popover stays open after the first date is selected.
+    event.stopPropagation(); 
+    
+    const dateString = event.currentTarget.dataset.date; // YYYY-MM-DD
+    if (!dateString) return;
 
-              if (sortValue === 'newest') {
-                  return dateB - dateA; 
-              } else {
-                  return dateA - dateB; 
-              }
-          });
-      }
+    const newDate = new Date(dateString);
+    newDate.setHours(0, 0, 0, 0); // Normalize to midnight
 
-      // Clear the existing content (already detached)
-      tableBody.innerHTML = '';
-      
-      // Append sorted visible rows first
-      visibleRows.forEach(row => tableBody.appendChild(row));
-      
-      // Append hidden rows last
-      hiddenRows.forEach(row => tableBody.appendChild(row));
+    if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
+        // Case 1: Start a new selection (clear end date)
+        selectedStartDate = newDate;
+        selectedEndDate = null;
+    } else if (newDate.getTime() < selectedStartDate.getTime()) {
+        // Case 2: New date is before start date (swap them)
+        selectedEndDate = selectedStartDate;
+        selectedStartDate = newDate;
+    } else {
+        // Case 3: New date is after start date (set as end date)
+        selectedEndDate = newDate;
+    }
+    
+    // Always rerender the calendar to show the new selection
+    renderCalendar();
+    // Update the button display text instantly
+    updateDateRangeDisplay(); 
+}
 
-      // **Optimization Step 2: Re-attach the tableBody to the DOM**
-      if (parent) {
-          parent.appendChild(tableBody);
-      }
+// 2. Attach click handlers after rendering the calendar HTML
+function attachCalendarListeners() {
+    
+    // Month/Year Selectors (NEW)
+    const monthSelect = document.getElementById('monthSelect');
+    const yearSelect = document.getElementById('yearSelect');
 
-      // CRITICAL: Repaint the colors AFTER sorting is done
-      reapplyStriping();
-  }
+    const handleSelectChange = (e) => {
+        e.stopPropagation(); // Prevents selection change from closing the popover
+        
+        // Update state based on current selection
+        const newMonth = parseInt(monthSelect.value);
+        const newYear = parseInt(yearSelect.value);
 
-  // --- 5. Striping Logic (The "Paint" Brush) ---
-  function reapplyStriping() {
-      const tableBody = document.getElementById('tableBody');
-      const rows = Array.from(tableBody.getElementsByTagName('tr'));
-      
-      let visibleCount = 0; // Only count what the user can see
+        currentCalendarDate.setMonth(newMonth);
+        currentCalendarDate.setFullYear(newYear);
+        
+        renderCalendar();
+    };
 
-      rows.forEach(row => {
-          // 1. Always remove the highlight class first to reset
-          row.classList.remove('highlight-row');
+    if (monthSelect) {
+        monthSelect.addEventListener('change', handleSelectChange);
+    }
+    if (yearSelect) {
+        yearSelect.addEventListener('change', handleSelectChange);
+    }
+    
+    // Previous/Next Month Buttons
+    if (document.getElementById('prevMonth')) {
+        document.getElementById('prevMonth').addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevents nav buttons from closing the popover
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+            renderCalendar();
+        });
+    }
 
-          // 2. Only process visible rows
-          if (row.style.display !== 'none') {
-              // If the counter is ODD (1, 3, 5...), add the highlight class
-              if (visibleCount % 2 !== 0) {
-                  row.classList.add('highlight-row');
-              }
-              visibleCount++;
-          }
-      });
-  }
+    if (document.getElementById('nextMonth')) {
+        document.getElementById('nextMonth').addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevents nav buttons from closing the popover
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+            renderCalendar();
+        });
+    }
 
-  // --- 6. Reset Button ---
-  function resetFilters() {
-      document.getElementById('statusSelect').value = 'all';
-      document.getElementById('typeSelect').value = 'all'; // ✨ FIX 2: Ensure Type dropdown is set to 'all'
-      document.getElementById('sortSelect').value = 'newest';
-      
-      const tabs = document.getElementsByClassName("tab");
-      for (var i = 0; i < tabs.length; i++) {
-          tabs[i].classList.remove("active");
-      }
-      // Reset to the 'All' tab (the first one)
-      if (tabs.length > 0) {
-          tabs[0].classList.add("active");
-      }
-      currentActiveTab = 'all';
+    // Attach click listeners to the dynamically rendered day cells
+    if (calendarContainer) {
+        calendarContainer.querySelectorAll('.day').forEach(cell => {
+            cell.addEventListener('click', handleDateClick);
+        });
+    }
+}
 
-      applyFilters(); // This will trigger sortRows and reapplyStriping
-  }
+// 3. Render the calendar grid based on currentCalendarDate
+function renderCalendar() {
+    if (!calendarContainer) return;
+    
+    calendarContainer.innerHTML = ''; 
+
+    const date = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), 1);
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDayOfWeek = date.getDay(); 
+
+    // --- NEW: Generate Month Dropdown Options ---
+    let monthOptions = '';
+    for (let i = 0; i < 12; i++) {
+        const name = new Date(year, i, 1).toLocaleDateString(undefined, { month: 'long' });
+        const selected = (i === month) ? 'selected' : '';
+        monthOptions += `<option value="${i}" ${selected}>${name}</option>`;
+    }
+    
+    // --- NEW: Generate Year Dropdown Options (e.g., current year +/- 5) ---
+    let yearOptions = '';
+    const currentYear = new Date().getFullYear();
+    // Loop through 5 years before to 5 years after the current year
+    for (let i = currentYear - 5; i <= currentYear + 5; i++) {
+        const selected = (i === year) ? 'selected' : '';
+        yearOptions += `<option value="${i}" ${selected}>${i}</option>`;
+    }
+
+    let calendarHTML = `
+        <div class="calendar-header">
+            <button id="prevMonth" class="nav-button">←</button>
+            <div class="month-year-selects">
+                <select id="monthSelect">${monthOptions}</select>
+                <select id="yearSelect">${yearOptions}</select>
+            </div>
+            <button id="nextMonth" class="nav-button">→</button>
+        </div>
+        <table class="calendar-grid">
+            <thead>
+                <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
+            </thead>
+            <tbody>
+                <tr>`;
+
+    let totalCells = 0;
+
+    // Fill leading empty cells (days from previous month)
+    for (let i = 0; i < firstDayOfWeek; i++) {
+        calendarHTML += '<td></td>';
+        totalCells++;
+    }
+
+    // Fill calendar days
+    for (let i = 1; i <= daysInMonth; i++) {
+        const currentDate = new Date(year, month, i);
+        
+        // Normalize dates for comparison (set time to midnight)
+        const dayKey = new Date(currentDate.setHours(0, 0, 0, 0)).getTime();
+        const startKey = selectedStartDate ? selectedStartDate.getTime() : null;
+        const endKey = selectedEndDate ? selectedEndDate.getTime() : null;
+
+        let className = 'day';
+        if (dayKey === startKey && dayKey === endKey) {
+            className += ' start-date end-date';
+        } else if (dayKey === startKey) {
+            className += ' start-date';
+        } else if (dayKey === endKey) {
+            className += ' end-date';
+        } else if (startKey && endKey && dayKey > startKey && dayKey < endKey) {
+            className += ' range-date';
+        }
+        
+        calendarHTML += `<td class="${className}" data-date="${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}">${i}</td>`;
+        
+        totalCells++;
+        
+        if (totalCells % 7 === 0 && i < daysInMonth) {
+            calendarHTML += '</tr><tr>';
+        }
+    }
+
+    // Fill trailing empty cells 
+    while (totalCells % 7 !== 0) {
+        calendarHTML += '<td></td>';
+        totalCells++;
+    }
+
+    calendarHTML += '</tr></tbody></table>';
+    calendarContainer.innerHTML = calendarHTML;
+    
+    // Re-attach event listeners 
+    attachCalendarListeners();
+}
+
+// 4. Update the display function to use state variables
+function updateDateRangeDisplay() {
+    if (!dateRangeDisplay) return; 
+
+    const start = selectedStartDate;
+    const end = selectedEndDate;
+
+    if (!start && !end) {
+        dateRangeDisplay.textContent = 'Date Range';
+    } else {
+        const formatDate = (dateObj) => {
+            if (!dateObj) return 'Any';
+            return dateObj.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric', year: 'numeric' });
+        };
+        const startFmt = start ? formatDate(start) : 'Any';
+        const endFmt = end ? formatDate(end) : 'Any';
+
+        dateRangeDisplay.textContent = `${startFmt} – ${endFmt}`;
+    }
+}
+
+
+// --- 2. Tab Click Logic ---
+function filterTabs(event, category) {
+    var tabs = document.getElementsByClassName("tab");
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove("active");
+    }
+    event.currentTarget.classList.add("active");
+
+    const typeSelect = document.getElementById('typeSelect');
+    if (typeSelect) {
+        typeSelect.value = category; 
+    }
+
+    currentActiveTab = category;
+    applyFilters();
+}
+
+// --- 3. Master Filter (Shows/Hides Rows) ---
+function applyFilters() {
+    // 1. Get ALL filter values
+    const statusFilter = document.getElementById('statusSelect').value.toLowerCase();
+    const typeFilter = document.getElementById('typeSelect').value;
+    
+    // 🎯 Use COMPLEX CALENDAR STATE variables for filtering
+    const startDate = selectedStartDate;
+    const endDate = selectedEndDate;
+    
+    const tableBody = document.getElementById('tableBody');
+    const rows = Array.from(tableBody.getElementsByTagName('tr'));
+
+    rows.forEach(row => {
+        // Prepare Row Data
+        const rowType = row.getAttribute('data-type');
+        
+        // A. Tab/Type Check 
+        const typeMatch = (typeFilter === 'all' || rowType === typeFilter);
+
+        // B. Status Badge Check 
+        const badge = row.querySelector('.badge');
+        let badgeText = badge ? badge.innerText.toLowerCase() : '';
+        if (badgeText.includes('acknowledged')) {
+            badgeText = 'acknowledged';
+        } else if (badgeText.includes('approved')) {
+            badgeText = 'approved';
+        } else if (badgeText.includes('denied')) {
+            badgeText = 'denied';
+        } else if (badgeText.includes('follow-up')) {
+            badgeText = 'follow-up';
+        }
+        const statusMatch = (statusFilter === 'all' || badgeText === statusFilter);
+
+        // C. Date Range Check (Uses the state variables directly)
+        const submittedDateStr = row.cells[4] ? row.cells[4].innerText : ''; 
+        let dateMatches = true;
+
+        if (startDate || endDate) {
+            const submittedDate = submittedDateStr ? new Date(submittedDateStr) : null;
+
+            if (!submittedDate || isNaN(submittedDate.getTime())) {
+                dateMatches = false;
+            } else {
+                const normalizedSubmittedDate = new Date(submittedDate.setHours(0, 0, 0, 0));
+
+                if (startDate && normalizedSubmittedDate < startDate) {
+                    dateMatches = false;
+                }
+                if (endDate && normalizedSubmittedDate > endDate) {
+                    dateMatches = false;
+                }
+            }
+        }
+
+        // Apply Display Logic: Combine all filters
+        const showRow = statusMatch && typeMatch && dateMatches;
+
+        if (showRow) {
+            row.style.display = ""; // Show
+        } else {
+            row.style.display = "none"; // Hide
+        }
+    });
+
+    // Trigger Sort
+    sortRows();
+}
+
+// --- 4. Sorting Logic (Optimized for flicker reduction) ---
+function sortRows() {
+    const sortValue = document.getElementById('sortSelect').value;
+    const tableBody = document.getElementById('tableBody');
+    
+    // **Optimization Step 1: Detach tableBody from the DOM**
+    const parent = tableBody.parentNode;
+    if (parent) {
+        parent.removeChild(tableBody);
+    }
+
+    const allRows = Array.from(tableBody.getElementsByTagName('tr'));
+    
+    const visibleRows = allRows.filter(row => row.style.display !== 'none');
+    const hiddenRows = allRows.filter(row => row.style.display === 'none');
+    
+    if (visibleRows.length > 0) {
+        visibleRows.sort((a, b) => {
+            const dateA = new Date(a.cells[4].innerText);
+            const dateB = new Date(b.cells[4].innerText);
+
+            if (sortValue === 'newest') {
+                return dateB - dateA; 
+            } else {
+                return dateA - dateB; 
+            }
+        });
+    }
+
+    tableBody.innerHTML = '';
+    
+    visibleRows.forEach(row => tableBody.appendChild(row));
+    hiddenRows.forEach(row => tableBody.appendChild(row));
+
+    // **Optimization Step 2: Re-attach the tableBody to the DOM**
+    if (parent) {
+        parent.appendChild(tableBody);
+    }
+
+    reapplyStriping();
+}
+
+// --- 5. Striping Logic (The "Paint" Brush) ---
+function reapplyStriping() {
+    const tableBody = document.getElementById('tableBody');
+    const rows = Array.from(tableBody.getElementsByTagName('tr'));
+    
+    let visibleCount = 0; 
+
+    rows.forEach(row => {
+        row.classList.remove('highlight-row');
+
+        if (row.style.display !== 'none') {
+            if (visibleCount % 2 !== 0) {
+                row.classList.add('highlight-row');
+            }
+            visibleCount++;
+        }
+    });
+}
+
+// --- 6. Reset Button ---
+function resetFilters() {
+    document.getElementById('statusSelect').value = 'all';
+    document.getElementById('typeSelect').value = 'all'; 
+    document.getElementById('sortSelect').value = 'newest';
+    
+    // Clear the date state and rerender
+    selectedStartDate = null;
+    selectedEndDate = null;
+    updateDateRangeDisplay(); 
+    renderCalendar(); 
+    
+    const tabs = document.getElementsByClassName("tab");
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove("active");
+    }
+    if (tabs.length > 0) {
+        tabs[0].classList.add("active");
+    }
+    currentActiveTab = 'all';
+
+    applyFilters(); 
+}

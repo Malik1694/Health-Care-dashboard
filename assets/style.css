@@ -55,7 +55,17 @@
     --radius-lg: 14px;
     --container-max: 1460px;
 }
-
+:root {
+    /* RUI Calendar overrides/defaults */
+    --rui-primary-color: #0087c5; /* Specific blue for selection */
+    --rui-secondary-color: #f0f7f9; /* Light background for range */
+    --rui-border-color: #e5e5e5;
+    --rui-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    --rui-bg-light: #f8f8f8;
+    --rui-text-main: #333333;
+    --rui-text-muted: #999999;
+    --rui-font-weight-bold: 600;
+}
 /* =========================================
    2. RESET & BASE STYLES
    ========================================= */
@@ -358,7 +368,7 @@ a {
 }
 
 .activity-log {
-     /* ensures text wraps correctly without overflow */
+    /* ensures text wraps correctly without overflow */
     word-break: break-word; 
 }
 
@@ -516,8 +526,224 @@ tbody tr.highlight-row td {
     border-bottom: 1px solid #e2e8f0;
 }
 
+
 /* =========================================
-   6. MEDIA QUERIES
+   DATE RANGE FILTER POPUP & CALENDAR STYLES
+   ========================================= */
+
+   .date-range-filter-container {
+    /* Critical: Set position relative for the popover to anchor correctly */
+    position: relative;
+    border-left: 1px solid var(--rui-border-color);
+    flex: 2; 
+    padding: 0; 
+    /* Prevent the container from collapsing around the absolute popover */
+    min-height: 100%; 
+}
+
+.filter-dropdown-toggle {
+    background: none;
+    border: none;
+    padding: 26px 16px 27px 16px; 
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: var(--rui-font-weight-bold);
+    color: var(--rui-text-main);
+}
+
+.filter-dropdown-toggle.active .arrow-icon {
+    transform: rotate(180deg); 
+}
+
+/* -------------------------------------------
+   DATE RANGE POPUP (THE CALENDAR CONTAINER)
+   ------------------------------------------- */
+
+.filter-popover {
+    /* CRITICAL: Absolute positioning anchored to .date-range-filter-container */
+    position: absolute; 
+    top: calc(100% + 5px); 
+    left: 0; 
+    z-index: 9999; /* Ensure it floats above everything else */
+    
+    background: white;
+    border: 1px solid var(--rui-border-color);
+    box-shadow: var(--rui-box-shadow); 
+    border-radius: 8px;
+    padding: 10px;
+    min-width: 320px; 
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-popover.hidden {
+    display: none;
+}
+
+/* -------------------------------------------
+   CALENDAR GRID STYLES (High Specificity Overrides)
+   ------------------------------------------- */
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0px;
+    font-size: 1.1rem;
+    font-weight: var(--rui-font-weight-bold);
+}
+
+.calendar-header .month-year {
+    font-weight: var(--rui-font-weight-bold);
+    color: var(--rui-text-main);
+}
+
+.calendar-header .nav-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 800 !important;
+    line-height: 1;
+    color: var(--rui-text-main);
+    padding: 15px 10px;
+    transition: color 0.15s;
+}
+.calendar-header .nav-button:hover {
+    color: var(--rui-text-main);
+}
+
+.calendar-grid {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calendar-grid th {
+    text-align: center;
+    padding: 8px 0 !important;
+    color: var(--rui-text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    border-bottom: none !important; 
+    background-color: white !important; 
+}
+
+.calendar-grid td {
+    text-align: center;
+    padding: 8px 0 !important;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--rui-text-main);
+    user-select: none;
+    transition: background-color 0.1s;
+    border: none !important; 
+    background-color: white !important; 
+}
+
+/* Day hover state */
+.calendar-grid td.day:hover {
+    background-color: #f8f8f8; 
+    border-radius: 50%;
+}
+.calendar-grid td:empty {
+    cursor: default;
+    background: none !important;
+}
+
+/* Selected Date Styles */
+.calendar-grid td.start-date,
+.calendar-grid td.end-date {
+    background-color: var(--rui-primary-color) !important;
+    color: white;
+    font-weight: var(--rui-font-weight-bold);
+    border-radius: 50%;
+    position: relative;
+    z-index: 2; 
+}
+
+/* Range Highlight */
+.calendar-grid td.range-date {
+    background-color: var(--rui-secondary-color) !important; 
+    color: var(--rui-text-main);
+    border-radius: 0;
+    z-index: 1;
+}
+
+/* --- Range Edge Correction --- */
+.calendar-grid td.start-date {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.calendar-grid td.end-date {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.calendar-grid td.start-date.end-date { /* Single day selection */
+    border-radius: 50%;
+}
+
+
+/* -------------------------------------------
+   ACTION BUTTONS (Clear/Apply)
+   ------------------------------------------- */
+
+.popover-actions {
+    display: flex;
+    justify-content: flex-end; 
+    gap: 15px;
+    padding: 10px 0 0 0;
+    border-top: 1px solid var(--rui-border-color);
+}
+
+/* Shared button styles */
+.filter-popover .apply-button, 
+.filter-popover .clear-button {
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: var(--rui-font-weight-bold);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.filter-popover .apply-button {
+    background-color: var(--rui-primary-color);
+    color: white;
+    border: none;
+}
+
+.filter-popover .clear-button {
+    background: transparent;
+    border: none;
+    color: var(--rui-text-main);
+    text-decoration: none;
+    transition: background-color 0.15s;
+}
+.filter-popover .clear-button:hover {
+    text-decoration: underline;
+}
+#monthSelect select {
+    appearance: none;
+    padding: 15px 10px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+
+.month-year-selects {
+    display: flex;
+    width: 100%;
+    align-items: anchor-center;
+    justify-content: space-between;
+}
+/* =========================================
+   6. MEDIA QUERIES (NO EDITS HERE)
    ========================================= */
 
 /* Medium Desktop / Large Tablet: 1025px – 1239px */

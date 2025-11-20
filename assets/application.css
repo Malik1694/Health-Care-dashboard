@@ -45,7 +45,7 @@ body {
 /* Grid Layout */
 .grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 2fr 350px;
   gap: 24px;
   padding-top: 10px;
 }
@@ -1209,7 +1209,6 @@ input[type="text"] {
   gap: 16px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   width: 100%;
-  max-width: 320px; 
 }
 
 .sidebar-card {
