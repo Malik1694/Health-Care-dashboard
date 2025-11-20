@@ -114,7 +114,7 @@ function handleDateClick(event) {
 // 2. Attach click handlers after rendering the calendar HTML
 function attachCalendarListeners() {
     
-    // Month/Year Selectors (NEW)
+    // Month/Year Selectors 
     const monthSelect = document.getElementById('monthSelect');
     const yearSelect = document.getElementById('yearSelect');
 
@@ -176,7 +176,7 @@ function renderCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDayOfWeek = date.getDay(); 
 
-    // --- NEW: Generate Month Dropdown Options ---
+    // --- Generate Month Dropdown Options ---
     let monthOptions = '';
     for (let i = 0; i < 12; i++) {
         const name = new Date(year, i, 1).toLocaleDateString(undefined, { month: 'long' });
@@ -184,7 +184,7 @@ function renderCalendar() {
         monthOptions += `<option value="${i}" ${selected}>${name}</option>`;
     }
     
-    // --- NEW: Generate Year Dropdown Options (e.g., current year +/- 5) ---
+    // --- Generate Year Dropdown Options (e.g., current year +/- 5) ---
     let yearOptions = '';
     const currentYear = new Date().getFullYear();
     // Loop through 5 years before to 5 years after the current year
@@ -366,49 +366,96 @@ function applyFilters() {
     // Trigger Sort
     sortRows();
 }
-
 // --- 4. Sorting Logic (Optimized for flicker reduction) ---
 function sortRows() {
-    const sortValue = document.getElementById('sortSelect').value;
-    const tableBody = document.getElementById('tableBody');
-    
-    // **Optimization Step 1: Detach tableBody from the DOM**
-    const parent = tableBody.parentNode;
-    if (parent) {
-        parent.removeChild(tableBody);
-    }
+  const sortValue = document.getElementById('sortSelect').value;
+  const tableBody = document.getElementById('tableBody');
+  const today = new Date(); // Current date for calculation
+  today.setHours(0, 0, 0, 0); 
+  
+  // Helper function for robust date parsing (converts MM/DD/YYYY or similar to YYYY-MM-DD)
+  const parseDateForSort = (dateStr) => {
+      if (!dateStr) return new Date(NaN); // Return Invalid Date for empty strings
+      
+      // This attempts to handle common formats like MM/DD/YYYY or M/D/YY
+      // If your date format is different (e.g., DD-MMM-YYYY), this needs adjustment.
+      // Assuming your table cell contains a date string like "11/20/2025"
+      const parts = dateStr.split(/[\/\-]/); 
+      
+      if (parts.length === 3) {
+          // Assume MM/DD/YYYY format for reliable parsing
+          const date = new Date(parts[2], parts[0] - 1, parts[1]);
+          date.setHours(0, 0, 0, 0);
+          return date;
+      }
+      
+      // Fallback to standard new Date() for ISO formats or unexpected strings
+      const fallbackDate = new Date(dateStr);
+      fallbackDate.setHours(0, 0, 0, 0);
+      return fallbackDate;
+  };
+  
+  // **Optimization Step 1: Detach tableBody from the DOM**
+  const parent = tableBody.parentNode;
+  if (parent) {
+      parent.removeChild(tableBody);
+  }
 
-    const allRows = Array.from(tableBody.getElementsByTagName('tr'));
-    
-    const visibleRows = allRows.filter(row => row.style.display !== 'none');
-    const hiddenRows = allRows.filter(row => row.style.display === 'none');
-    
-    if (visibleRows.length > 0) {
-        visibleRows.sort((a, b) => {
-            const dateA = new Date(a.cells[4].innerText);
-            const dateB = new Date(b.cells[4].innerText);
+  const allRows = Array.from(tableBody.getElementsByTagName('tr'));
+  
+  const visibleRows = allRows.filter(row => row.style.display !== 'none');
+  const hiddenRows = allRows.filter(row => row.style.display === 'none');
+  
+  if (visibleRows.length > 0) {
+      visibleRows.sort((a, b) => {
+          // Get the submission date from the 5th column (index 4)
+          const dateA = parseDateForSort(a.cells[4].innerText);
+          const dateB = parseDateForSort(b.cells[4].innerText);
+          
+          const timeA = dateA.getTime();
+          const timeB = dateB.getTime();
 
-            if (sortValue === 'newest') {
-                return dateB - dateA; 
-            } else {
-                return dateA - dateB; 
-            }
-        });
-    }
+          // Handle Invalid Dates (e.g., empty or unparseable cells)
+          const isInvalidA = isNaN(timeA);
+          const isInvalidB = isNaN(timeB);
 
-    tableBody.innerHTML = '';
-    
-    visibleRows.forEach(row => tableBody.appendChild(row));
-    hiddenRows.forEach(row => tableBody.appendChild(row));
+          if (isInvalidA && isInvalidB) return 0;
+          if (isInvalidA) return sortValue === 'newest' ? 1 : -1; // Push invalid date to the end for 'newest'
+          if (isInvalidB) return sortValue === 'newest' ? -1 : 1; // Pull valid date to the start for 'newest'
 
-    // **Optimization Step 2: Re-attach the tableBody to the DOM**
-    if (parent) {
-        parent.appendChild(tableBody);
-    }
+          // --- Calculation of Days Remaining (30-day window) ---
+          const dayToMs = 1000 * 60 * 60 * 24;
+          
+          // Days passed since submission
+          const daysPassedA = Math.floor((today.getTime() - timeA) / dayToMs);
+          const daysPassedB = Math.floor((today.getTime() - timeB) / dayToMs);
+          
+          // Days remaining out of the 30-day window
+          const daysRemainingA = 30 - daysPassedA;
+          const daysRemainingB = 30 - daysPassedB;
+          
+          if (sortValue === 'newest') {
+              // 'Recent' = Highest daysRemaining (Closest to 30 days left)
+              return daysRemainingB - daysRemainingA; 
+          } else {
+              // 'Oldest' = Lowest daysRemaining (Closest to 0 days left, or negative for expired)
+              return daysRemainingA - daysRemainingB; 
+          }
+      });
+  }
 
-    reapplyStriping();
+  tableBody.innerHTML = '';
+  
+  visibleRows.forEach(row => tableBody.appendChild(row));
+  hiddenRows.forEach(row => tableBody.appendChild(row));
+
+  // **Optimization Step 2: Re-attach the tableBody to the DOM**
+  if (parent) {
+      parent.appendChild(tableBody);
+  }
+
+  reapplyStriping();
 }
-
 // --- 5. Striping Logic (The "Paint" Brush) ---
 function reapplyStriping() {
     const tableBody = document.getElementById('tableBody');
