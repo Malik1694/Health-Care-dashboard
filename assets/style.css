@@ -466,13 +466,11 @@ a {
 
 /* 🆕 CSS to hide the default browser arrow on the select element */
 .select-wrapper select {
-    appearance: none; /* Hide default arrow in most browsers */
-    -webkit-appearance: none; /* Hide default arrow in Chrome/Safari */
-    -moz-appearance: none; /* Hide default arrow in Firefox */
-    
-    padding: 23px 11px 23px 12px;
-    /* 🆕 Ensure space on the right for the custom arrow */
-    padding-right: 40px; 
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 26px 11px !important;
+    padding-right: 40px;
     border: none;
     border-right: 1px solid var(--border-medium);
     background-color: var(--bg-surface-alt);
@@ -486,7 +484,7 @@ a {
 .select-wrapper::after {
     content: '\2304';
     position: absolute;
-    top: 8%;
+    top: 13%;
     right: 15px;
     pointer-events: none;
     font-size: 26px;
