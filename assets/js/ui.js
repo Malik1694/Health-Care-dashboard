@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 🎯 NEW: Render the calendar on page load
     renderCalendar();
 
-    // --- POPUP CONTROL LOGIC ---
+    // --- POPUP CONTROL LOGIC (Date Range Button) ---
     
     // Popover Toggle Logic: Open/close when clicking the main button
     if (dateRangeToggle) {
@@ -31,7 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
             e.stopPropagation(); // Prevents click on toggle from triggering outside-click listener
             if (dateRangePopover) {
                 dateRangePopover.classList.toggle('hidden');
-                dateRangeToggle.classList.toggle('active');
+                // Toggles 'active' class to rotate the icon
+                dateRangeToggle.classList.toggle('active'); 
             }
         });
     }
@@ -76,6 +77,25 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('statusSelect')) document.getElementById('statusSelect').addEventListener('change', applyFilters);
     if (document.getElementById('typeSelect')) document.getElementById('typeSelect').addEventListener('change', applyFilters);
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').addEventListener('change', sortRows); 
+
+    // 🏆 FIX: Moved Dropdown Animation Listeners here 
+    // This runs once the DOM is ready, enabling the rotation animation.
+    document.querySelectorAll('.select-wrapper select').forEach(selectElement => {
+        const wrapper = selectElement.closest('.select-wrapper');
+
+        selectElement.addEventListener('focus', () => {
+            wrapper.classList.add('active');
+        });
+
+        // Removes 'active' class when the select element loses focus (i.e., dropdown closes or user tabs away)
+        selectElement.addEventListener('blur', () => {
+             // Use a small delay to prevent immediate removal if user clicks another element quickly
+            setTimeout(() => { 
+                wrapper.classList.remove('active');
+            }, 100); 
+        });
+    });
+    // 🏆 END FIX
 });
 
 // --- NEW: COMPLEX CALENDAR LOGIC (State Management, Rendering, and Interaction) ---
@@ -83,7 +103,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // 1. Logic to handle selecting the start/end date when a day cell is clicked
 function handleDateClick(event) {
     // 🛑 CRITICAL FIX: STOP THE CLICK FROM BUBBLING TO THE DOCUMENT LISTENER
-    // This ensures the popover stays open after the first date is selected.
     event.stopPropagation(); 
     
     const dateString = event.currentTarget.dataset.date; // YYYY-MM-DD
@@ -271,7 +290,8 @@ function updateDateRangeDisplay() {
     } else {
         const formatDate = (dateObj) => {
             if (!dateObj) return 'Any';
-            return dateObj.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric', year: 'numeric' });
+            // Use 'en-US' locale for MM/DD/YYYY format consistency
+            return dateObj.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
         };
         const startFmt = start ? formatDate(start) : 'Any';
         const endFmt = end ? formatDate(end) : 'Any';
@@ -342,6 +362,7 @@ function applyFilters() {
             if (!submittedDate || isNaN(submittedDate.getTime())) {
                 dateMatches = false;
             } else {
+                // Normalize submitted date to midnight for comparison
                 const normalizedSubmittedDate = new Date(submittedDate.setHours(0, 0, 0, 0));
 
                 if (startDate && normalizedSubmittedDate < startDate) {
@@ -368,93 +389,79 @@ function applyFilters() {
 }
 // --- 4. Sorting Logic (Optimized for flicker reduction) ---
 function sortRows() {
-  const sortValue = document.getElementById('sortSelect').value;
-  const tableBody = document.getElementById('tableBody');
-  const today = new Date(); // Current date for calculation
-  today.setHours(0, 0, 0, 0); 
-  
-  // Helper function for robust date parsing (converts MM/DD/YYYY or similar to YYYY-MM-DD)
-  const parseDateForSort = (dateStr) => {
-      if (!dateStr) return new Date(NaN); // Return Invalid Date for empty strings
-      
-      // This attempts to handle common formats like MM/DD/YYYY or M/D/YY
-      // If your date format is different (e.g., DD-MMM-YYYY), this needs adjustment.
-      // Assuming your table cell contains a date string like "11/20/2025"
-      const parts = dateStr.split(/[\/\-]/); 
-      
-      if (parts.length === 3) {
-          // Assume MM/DD/YYYY format for reliable parsing
-          const date = new Date(parts[2], parts[0] - 1, parts[1]);
-          date.setHours(0, 0, 0, 0);
-          return date;
-      }
-      
-      // Fallback to standard new Date() for ISO formats or unexpected strings
-      const fallbackDate = new Date(dateStr);
-      fallbackDate.setHours(0, 0, 0, 0);
-      return fallbackDate;
-  };
-  
-  // **Optimization Step 1: Detach tableBody from the DOM**
-  const parent = tableBody.parentNode;
-  if (parent) {
-      parent.removeChild(tableBody);
-  }
+    const sortValue = document.getElementById('sortSelect').value;
+    const tableBody = document.getElementById('tableBody');
+    const today = new Date(); // Current date for calculation
+    today.setHours(0, 0, 0, 0); 
+    
+    // Helper function for robust date parsing (converts MM/DD/YYYY or similar to YYYY-MM-DD)
+    const parseDateForSort = (dateStr) => {
+        if (!dateStr) return new Date(NaN); // Return Invalid Date for empty strings
+        
+        // Assuming your table cell contains a date string like "11/20/2025" (MM/DD/YYYY)
+        const parts = dateStr.split(/[\/\-]/); 
+        
+        if (parts.length === 3) {
+            // Assume MM/DD/YYYY format for reliable parsing
+            const date = new Date(parts[2], parts[0] - 1, parts[1]);
+            date.setHours(0, 0, 0, 0);
+            return date;
+        }
+        
+        // Fallback to standard new Date() for ISO formats or unexpected strings
+        const fallbackDate = new Date(dateStr);
+        fallbackDate.setHours(0, 0, 0, 0);
+        return fallbackDate;
+    };
+    
+    // **Optimization Step 1: Detach tableBody from the DOM**
+    const parent = tableBody.parentNode;
+    if (parent) {
+        parent.removeChild(tableBody);
+    }
 
-  const allRows = Array.from(tableBody.getElementsByTagName('tr'));
-  
-  const visibleRows = allRows.filter(row => row.style.display !== 'none');
-  const hiddenRows = allRows.filter(row => row.style.display === 'none');
-  
-  if (visibleRows.length > 0) {
-      visibleRows.sort((a, b) => {
-          // Get the submission date from the 5th column (index 4)
-          const dateA = parseDateForSort(a.cells[4].innerText);
-          const dateB = parseDateForSort(b.cells[4].innerText);
-          
-          const timeA = dateA.getTime();
-          const timeB = dateB.getTime();
+    const allRows = Array.from(tableBody.getElementsByTagName('tr'));
+    
+    const visibleRows = allRows.filter(row => row.style.display !== 'none');
+    const hiddenRows = allRows.filter(row => row.style.display === 'none');
+    
+    if (visibleRows.length > 0) {
+        visibleRows.sort((a, b) => {
+            // Get the submission date from the 5th column (index 4)
+            const dateA = parseDateForSort(a.cells[4].innerText);
+            const dateB = parseDateForSort(b.cells[4].innerText);
+            
+            const timeA = dateA.getTime();
+            const timeB = dateB.getTime();
 
-          // Handle Invalid Dates (e.g., empty or unparseable cells)
-          const isInvalidA = isNaN(timeA);
-          const isInvalidB = isNaN(timeB);
+            // Handle Invalid Dates (e.g., empty or unparseable cells)
+            const isInvalidA = isNaN(timeA);
+            const isInvalidB = isNaN(timeB);
 
-          if (isInvalidA && isInvalidB) return 0;
-          if (isInvalidA) return sortValue === 'newest' ? 1 : -1; // Push invalid date to the end for 'newest'
-          if (isInvalidB) return sortValue === 'newest' ? -1 : 1; // Pull valid date to the start for 'newest'
+            if (isInvalidA && isInvalidB) return 0;
+            if (isInvalidA) return sortValue === 'newest' ? 1 : -1; // Push invalid date to the end for 'newest'
+            if (isInvalidB) return sortValue === 'newest' ? -1 : 1; // Pull valid date to the start for 'newest'
 
-          // --- Calculation of Days Remaining (30-day window) ---
-          const dayToMs = 1000 * 60 * 60 * 24;
-          
-          // Days passed since submission
-          const daysPassedA = Math.floor((today.getTime() - timeA) / dayToMs);
-          const daysPassedB = Math.floor((today.getTime() - timeB) / dayToMs);
-          
-          // Days remaining out of the 30-day window
-          const daysRemainingA = 30 - daysPassedA;
-          const daysRemainingB = 30 - daysPassedB;
-          
-          if (sortValue === 'newest') {
-              // 'Recent' = Highest daysRemaining (Closest to 30 days left)
-              return daysRemainingB - daysRemainingA; 
-          } else {
-              // 'Oldest' = Lowest daysRemaining (Closest to 0 days left, or negative for expired)
-              return daysRemainingA - daysRemainingB; 
-          }
-      });
-  }
+            // Primary Sort: Newest vs. Oldest
+            if (sortValue === 'newest') {
+                return timeB - timeA; // B - A results in descending (newest first)
+            } else {
+                return timeA - timeB; // A - B results in ascending (oldest first)
+            }
+        });
+    }
 
-  tableBody.innerHTML = '';
-  
-  visibleRows.forEach(row => tableBody.appendChild(row));
-  hiddenRows.forEach(row => tableBody.appendChild(row));
+    tableBody.innerHTML = '';
+    
+    visibleRows.forEach(row => tableBody.appendChild(row));
+    hiddenRows.forEach(row => tableBody.appendChild(row));
 
-  // **Optimization Step 2: Re-attach the tableBody to the DOM**
-  if (parent) {
-      parent.appendChild(tableBody);
-  }
+    // **Optimization Step 2: Re-attach the tableBody to the DOM**
+    if (parent) {
+        parent.appendChild(tableBody);
+    }
 
-  reapplyStriping();
+    reapplyStriping();
 }
 // --- 5. Striping Logic (The "Paint" Brush) ---
 function reapplyStriping() {

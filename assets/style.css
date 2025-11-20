@@ -435,7 +435,6 @@ a {
     font-weight: var(--font-weight-bold);
     color: var(--color-primary);
 }
-
 /* --- Filters Toolbar --- */
 .filters {
     display: flex;
@@ -448,6 +447,7 @@ a {
 }
 
 .filters .filter {
+    /* Keep the main filter icon isolated if you want it to the far left */
     display: flex;
     align-items: center;
     gap: 6px;
@@ -464,38 +464,92 @@ a {
     flex: 1;
 }
 
-.custom-wrapper {
-    border-left: 1px solid var(--border-color);
-}
-
-.filters select {
-    /* appearance: none; */
-    padding: 15px 10px;
+/* 🆕 CSS to hide the default browser arrow on the select element */
+.select-wrapper select {
+    appearance: none; /* Hide default arrow in most browsers */
+    -webkit-appearance: none; /* Hide default arrow in Chrome/Safari */
+    -moz-appearance: none; /* Hide default arrow in Firefox */
+    
+    padding: 23px 11px 23px 12px;
+    /* 🆕 Ensure space on the right for the custom arrow */
+    padding-right: 40px; 
     border: none;
     border-right: 1px solid var(--border-medium);
     background-color: var(--bg-surface-alt);
     cursor: pointer;
     width: 100%;
-    /* Applied variables */
     font-family: var(--font-main);
     font-size: var(--font-size-md);
     font-weight: var(--font-weight-bold);
 }
 
-.select-wrapper select {
-    width: 100%;
-    padding: 23px 11px 23px 12px;
-    cursor: pointer;
-    /* Applied variables (already done above, but kept here for clarity if separated) */
-    font-family: var(--font-main);
-    font-size: var(--font-size-md);
-    font-weight: var(--font-weight-bold);
+.select-wrapper::after {
+    content: '\2304';
+    position: absolute;
+    top: 8%;
+    right: 15px;
+    pointer-events: none;
+    font-size: 26px;
+    color: var(
+    --color-text-main);
+    z-index: 5;
+}
+.filter-dropdown-toggle::after {
+    content: '\2304';
+    position: absolute;
+    top: 13%;
+    right: 15px;
+    pointer-events: none;
+    font-size: 26px;
+    color: var(
+    --color-text-main);
+    z-index: 5;
+    font-weight:400 !important;
+}
+.arrow-icon {
+    font-size: 26px;
+    top: 12%;
+    right: 15px;
+    /* transform: translateY(-50%); */
+    pointer-events: none;
+    font-size: 26px;
+    color: var(
+    --color-text-main);
+    z-index: 5;
+    font-weight: 300;
+}
 
+.custom-wrapper {
+    border-left: 1px solid var(--border-color);
 }
 
 .select-wrapper select:focus {
     border: 1px solid #ddd;
     outline: none;
+}
+
+/* Date Range Button Adjustments */
+
+.date-range-filter-container {
+    position: relative;
+    /* 🆕 Use the same border separator as the select wrappers */
+    border-left: 1px solid var(--border-color) !important; 
+    flex: 1;
+    padding: 0;
+}
+
+.filter-dropdown-toggle {
+    background: none;
+    border: none;
+    padding: 26px 16px 27px 16px; 
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: var(--font-weight-bold);
+    color: var(--rui-text-main);
+    font-family: var(--font-main);
 }
 
 /* Reset Button */
@@ -602,6 +656,8 @@ DATE RANGE FILTER POPUP & CALENDAR STYLES
     color: var(--rui-text-main);
     /* Applied variable */
     font-family: var(--font-main); 
+    border-right: 1px solid var(--border-color); 
+
 }
 
 .filter-dropdown-toggle.active .arrow-icon {
@@ -950,7 +1006,7 @@ ACTION BUTTONS (Clear/Apply)
     }
     /* Specific fix for the total application row */
     .applications .custom-status-list {
-        flex-direction: row !important;
+        display: block;
     }
     
     .status-list { margin-top: 0px !important; }
@@ -1007,10 +1063,12 @@ ACTION BUTTONS (Clear/Apply)
     .filters .filter,
     .select-wrapper { width: 100%; }
     .select-wrapper { border-bottom: 1px solid var(--border-color); }
-    .custom-wrapper { border-top-right-radius: 10px !important; }
+    .custom-wrapper {
+        border-left: none !important;
+        width: 100% !important;
+    }
     .select-wrapper select {
         border-right: none;
-        border-bottom: none;
         padding: 16px 40px 16px 16px;
         font-size: var(--font-size-sm);
         /* Applied variable */
@@ -1084,7 +1142,7 @@ ACTION BUTTONS (Clear/Apply)
         align-items: flex-start;
     }
     .applications .custom-status-list {
-        flex-direction: row !important;
+        display: block;
     }
     .text { 
         font-size: var(--font-size-xs); 
@@ -1093,7 +1151,7 @@ ACTION BUTTONS (Clear/Apply)
     }
     .select-wrapper select { 
         font-size: var(--font-size-xs); 
-        padding: 14px 35px 14px 14px; 
+        /* padding: 14px 35px 14px 14px;  */
     }
     .reset { font-size: var(--font-size-xs); }
     th { padding: 23px 9px !important; font-size: var(--font-size-xs) !important; }
@@ -1101,23 +1159,23 @@ ACTION BUTTONS (Clear/Apply)
     .badge { font-size: var(--font-size-xxs); padding: 3px 6px; }
     .pagination .page-item:not(.active):nth-child(n+6):nth-last-child(n+2) { display: none; }
     
-.filter-popover {
-    position: absolute;
-    top: calc(100% + 5px);
-    right: 0;
-    z-index: 9999;
-    background: white;
-    border: 1px solid var(--rui-border-color);
-    box-shadow: var(--rui-box-shadow);
-    border-radius: 8px;
-    padding: 10px;
-    min-width: 320px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    /* Applied variable */
-    font-family: var(--font-main);
-}
+    .filter-popover {
+        position: absolute;
+        /* top: calc(100% + 5px); */
+        right: 0;
+        left: -97px;
+        z-index: 9999;
+        background: white;
+        border: 1px solid var(--rui-border-color);
+        box-shadow: var(--rui-box-shadow);
+        border-radius: 8px;
+        padding: 10px;
+        min-width: 296px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-family: var(--font-main);
+    }
 
 .filter-popover.hidden {
     display: none;
@@ -1196,6 +1254,19 @@ ACTION BUTTONS (Clear/Apply)
 .calendar-grid td.start-date.end-date {
     border-radius: 50%;
 }
-
+.filter-dropdown-toggle {
+    background: none;
+    border: none;
+    padding: 26px 16px 27px 16px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: var(--font-weight-bold);
+    color: var(--rui-text-main);
+    font-family: var(--font-main);
+    /* border-right: 1px solid var(--border-color); */
+}
 
 }
