@@ -1120,6 +1120,22 @@ ACTION BUTTONS (Clear/Apply)
         font-weight: var(--font-weight-semibold);
     }
     .main-content .card.main-card { padding: 0px !important; }
+
+    .filter-dropdown-toggle {
+        background: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 25px 10px;
+        border-right:none !important ;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        font-weight: var(--font-weight-bold);
+        color: var(--rui-text-main);
+        font-family: var(--font-main);
+        border-right: 1px solid var(--border-color);
+    }
 }
 
 /* Small Mobile */
@@ -1255,7 +1271,7 @@ ACTION BUTTONS (Clear/Apply)
 .filter-dropdown-toggle {
     background: none;
     border: none;
-    padding: 26px 16px 27px 16px;
+    padding: 25px 11px;
     width: 100%;
     display: flex;
     align-items: center;
@@ -1264,7 +1280,7 @@ ACTION BUTTONS (Clear/Apply)
     font-weight: var(--font-weight-bold);
     color: var(--rui-text-main);
     font-family: var(--font-main);
-    /* border-right: 1px solid var(--border-color); */
+    border-right: 1px solid var(--border-color);
 }
 
 }

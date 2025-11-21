@@ -14,6 +14,21 @@ let selectedStartDate = null;
 let selectedEndDate = null;
 let currentCalendarDate = new Date(); // Tracks the currently displayed month/year
 
+// Helper function to get the number of days left (Time Trigger)
+function getDaysLeft(row) {
+    const timeTriggerCell = row.cells[6]; // 7th column (index 6)
+    const timeTriggerText = timeTriggerCell ? timeTriggerCell.innerText.trim() : '';
+
+    if (timeTriggerText.includes('Expired')) return -1; // Treat expired as lowest
+    if (timeTriggerText.includes('days left')) {
+        const days = parseInt(timeTriggerText.split(' ')[0], 10);
+        return isNaN(days) ? 9999 : days; // Use a large number for safety if parsing fails
+    }
+    // For 0 days left
+    if (timeTriggerText.includes('0 days left')) return 0;
+    
+    return 9999; // Default large number for non-standard/missing data
+}
 
 // --- 1. RUN ON PAGE LOAD (Event Listeners & Initial Filter) ---
 document.addEventListener('DOMContentLoaded', function() {
@@ -76,10 +91,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add listeners for other dropdowns that trigger filters immediately on change
     if (document.getElementById('statusSelect')) document.getElementById('statusSelect').addEventListener('change', applyFilters);
     if (document.getElementById('typeSelect')) document.getElementById('typeSelect').addEventListener('change', applyFilters);
+    // 🏆 FIX: Change event on sort now correctly calls the sort function which relies on applyFilters output
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').addEventListener('change', sortRows); 
 
-    // 🏆 FIX: Moved Dropdown Animation Listeners here 
-    // This runs once the DOM is ready, enabling the rotation animation.
+    // Dropdown Animation Listeners
     document.querySelectorAll('.select-wrapper select').forEach(selectElement => {
         const wrapper = selectElement.closest('.select-wrapper');
 
@@ -90,12 +105,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Removes 'active' class when the select element loses focus (i.e., dropdown closes or user tabs away)
         selectElement.addEventListener('blur', () => {
              // Use a small delay to prevent immediate removal if user clicks another element quickly
-            setTimeout(() => { 
-                wrapper.classList.remove('active');
-            }, 100); 
+             setTimeout(() => { 
+                 wrapper.classList.remove('active');
+             }, 100); 
         });
     });
-    // 🏆 END FIX
 });
 
 // --- NEW: COMPLEX CALENDAR LOGIC (State Management, Rendering, and Interaction) ---
@@ -108,19 +122,26 @@ function handleDateClick(event) {
     const dateString = event.currentTarget.dataset.date; // YYYY-MM-DD
     if (!dateString) return;
 
-    const newDate = new Date(dateString);
-    newDate.setHours(0, 0, 0, 0); // Normalize to midnight
+    // 🏆 FIX: Use ISO string to ensure correct date parsing regardless of local timezone offset
+    // The format YYYY-MM-DD *must* be parsed as UTC midnight (Z) to avoid date shifting.
+    const newDate = new Date(dateString + 'T00:00:00.000Z'); 
 
-    if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
+    // Normalize state dates to UTC midnight for comparison
+    const startKey = selectedStartDate ? selectedStartDate.getTime() : null;
+    const endKey = selectedEndDate ? selectedEndDate.getTime() : null;
+    const newKey = newDate.getTime();
+
+
+    if (!startKey || (startKey && endKey)) {
         // Case 1: Start a new selection (clear end date)
         selectedStartDate = newDate;
         selectedEndDate = null;
-    } else if (newDate.getTime() < selectedStartDate.getTime()) {
+    } else if (newKey < startKey) {
         // Case 2: New date is before start date (swap them)
         selectedEndDate = selectedStartDate;
         selectedStartDate = newDate;
     } else {
-        // Case 3: New date is after start date (set as end date)
+        // Case 3: New date is after or equal to start date (set as end date)
         selectedEndDate = newDate;
     }
     
@@ -236,16 +257,19 @@ function renderCalendar() {
         totalCells++;
     }
 
+    // Prepare normalized comparison keys for current selection
+    // 🏆 FIX: Ensure selectedStartDate and selectedEndDate are normalized to UTC midnight for consistent comparison
+    const startKey = selectedStartDate ? selectedStartDate.getTime() : null;
+    const endKey = selectedEndDate ? selectedEndDate.getTime() : null;
+    
     // Fill calendar days
     for (let i = 1; i <= daysInMonth; i++) {
-        const currentDate = new Date(year, month, i);
-        
-        // Normalize dates for comparison (set time to midnight)
-        const dayKey = new Date(currentDate.setHours(0, 0, 0, 0)).getTime();
-        const startKey = selectedStartDate ? selectedStartDate.getTime() : null;
-        const endKey = selectedEndDate ? selectedEndDate.getTime() : null;
+        // 🏆 FIX: Create date using UTC for consistent comparison with state variables
+        const currentDate = new Date(Date.UTC(year, month, i)); 
+        const dayKey = currentDate.getTime();
 
         let className = 'day';
+        // Compare keys (milliseconds since epoch)
         if (dayKey === startKey && dayKey === endKey) {
             className += ' start-date end-date';
         } else if (dayKey === startKey) {
@@ -293,16 +317,25 @@ function updateDateRangeDisplay() {
             // Use 'en-US' locale for MM/DD/YYYY format consistency
             return dateObj.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
         };
+        // 🏆 FIX: If only start is selected, show only start date
         const startFmt = start ? formatDate(start) : 'Any';
-        const endFmt = end ? formatDate(end) : 'Any';
-
-        dateRangeDisplay.textContent = `${startFmt} – ${endFmt}`;
+        const endFmt = end ? formatDate(end) : (start ? formatDate(start) : 'Any'); // If only start, end is the same
+        
+        dateRangeDisplay.textContent = `${startFmt} – ${end ? formatDate(end) : '?'}`;
+        // Set the display text to be Start Date - End Date (use ? if no end date selected yet)
+        if (start && !end) {
+             dateRangeDisplay.textContent = `${startFmt} – ?`;
+        } else if (start && end) {
+             dateRangeDisplay.textContent = `${formatDate(start)} – ${formatDate(end)}`;
+        } else {
+             dateRangeDisplay.textContent = 'Date Range';
+        }
     }
 }
 
 
 // --- 2. Tab Click Logic ---
-function filterTabs(event, category) {
+window.filterTabs = function(event, category) { // Make global for HTML onclick
     var tabs = document.getElementsByClassName("tab");
     for (var i = 0; i < tabs.length; i++) {
         tabs[i].classList.remove("active");
@@ -319,7 +352,7 @@ function filterTabs(event, category) {
 }
 
 // --- 3. Master Filter (Shows/Hides Rows) ---
-function applyFilters() {
+window.applyFilters = function() { // Make global for HTML onchange
     // 1. Get ALL filter values
     const statusFilter = document.getElementById('statusSelect').value.toLowerCase();
     const typeFilter = document.getElementById('typeSelect').value;
@@ -329,9 +362,10 @@ function applyFilters() {
     const endDate = selectedEndDate;
     
     const tableBody = document.getElementById('tableBody');
-    const rows = Array.from(tableBody.getElementsByTagName('tr'));
+    // 🏆 FIX: Get all rows first, including hidden ones, to ensure correct filtering.
+    const allRows = Array.from(tableBody.getElementsByTagName('tr')); 
 
-    rows.forEach(row => {
+    allRows.forEach(row => {
         // Prepare Row Data
         const rowType = row.getAttribute('data-type');
         
@@ -341,7 +375,8 @@ function applyFilters() {
         // B. Status Badge Check 
         const badge = row.querySelector('.badge');
         let badgeText = badge ? badge.innerText.toLowerCase() : '';
-        if (badgeText.includes('acknowledged')) {
+        // Standardize the status text for comparison
+        if (badgeText.includes('acknowledged') || badgeText.includes('awaiting acknowledgment')) {
             badgeText = 'acknowledged';
         } else if (badgeText.includes('approved')) {
             badgeText = 'approved';
@@ -349,7 +384,11 @@ function applyFilters() {
             badgeText = 'denied';
         } else if (badgeText.includes('follow-up')) {
             badgeText = 'follow-up';
+        } else {
+            // Catch-all for non-standard statuses, treating them as 'other'
+            badgeText = 'other';
         }
+
         const statusMatch = (statusFilter === 'all' || badgeText === statusFilter);
 
         // C. Date Range Check (Uses the state variables directly)
@@ -357,19 +396,36 @@ function applyFilters() {
         let dateMatches = true;
 
         if (startDate || endDate) {
-            const submittedDate = submittedDateStr ? new Date(submittedDateStr) : null;
+            // Helper function for robust date parsing (converts Oct 14, 2025 to a Date object)
+            const parseSubmittedDate = (dateStr) => {
+                if (!dateStr) return null;
+                // Use the string as is and then normalize to midnight UTC for comparison
+                const date = new Date(dateStr);
+                // 🏆 FIX: Normalize the submitted date to UTC midnight for comparison
+                return isNaN(date.getTime()) ? null : new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            };
 
-            if (!submittedDate || isNaN(submittedDate.getTime())) {
+            const submittedDate = parseSubmittedDate(submittedDateStr);
+            
+            if (!submittedDate) {
                 dateMatches = false;
             } else {
-                // Normalize submitted date to midnight for comparison
-                const normalizedSubmittedDate = new Date(submittedDate.setHours(0, 0, 0, 0));
-
-                if (startDate && normalizedSubmittedDate < startDate) {
+                const submittedKey = submittedDate.getTime();
+                
+                // Start date is inclusive (>=)
+                if (startDate && submittedKey < startDate.getTime()) {
                     dateMatches = false;
                 }
-                if (endDate && normalizedSubmittedDate > endDate) {
-                    dateMatches = false;
+                // End date is inclusive (<=)
+                if (endDate) {
+                    // Set end date to 23:59:59.999 UTC to include the entire day
+                    const endOfDay = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59, 999);
+                    // 🏆 FIX: Use UTC based end date comparison
+                    const normalizedEndDate = new Date(Date.UTC(endOfDay.getFullYear(), endOfDay.getMonth(), endOfDay.getDate(), 23, 59, 59, 999));
+                    
+                    if (submittedKey > normalizedEndDate.getTime()) {
+                        dateMatches = false;
+                    }
                 }
             }
         }
@@ -388,31 +444,9 @@ function applyFilters() {
     sortRows();
 }
 // --- 4. Sorting Logic (Optimized for flicker reduction) ---
-function sortRows() {
+window.sortRows = function() { // Make global for HTML onchange
     const sortValue = document.getElementById('sortSelect').value;
     const tableBody = document.getElementById('tableBody');
-    const today = new Date(); // Current date for calculation
-    today.setHours(0, 0, 0, 0); 
-    
-    // Helper function for robust date parsing (converts MM/DD/YYYY or similar to YYYY-MM-DD)
-    const parseDateForSort = (dateStr) => {
-        if (!dateStr) return new Date(NaN); // Return Invalid Date for empty strings
-        
-        // Assuming your table cell contains a date string like "11/20/2025" (MM/DD/YYYY)
-        const parts = dateStr.split(/[\/\-]/); 
-        
-        if (parts.length === 3) {
-            // Assume MM/DD/YYYY format for reliable parsing
-            const date = new Date(parts[2], parts[0] - 1, parts[1]);
-            date.setHours(0, 0, 0, 0);
-            return date;
-        }
-        
-        // Fallback to standard new Date() for ISO formats or unexpected strings
-        const fallbackDate = new Date(dateStr);
-        fallbackDate.setHours(0, 0, 0, 0);
-        return fallbackDate;
-    };
     
     // **Optimization Step 1: Detach tableBody from the DOM**
     const parent = tableBody.parentNode;
@@ -427,26 +461,20 @@ function sortRows() {
     
     if (visibleRows.length > 0) {
         visibleRows.sort((a, b) => {
-            // Get the submission date from the 5th column (index 4)
-            const dateA = parseDateForSort(a.cells[4].innerText);
-            const dateB = parseDateForSort(b.cells[4].innerText);
+            // 🏆 FIX: Primary Sort - Use getDaysLeft to sort by Time Trigger
+            const daysA = getDaysLeft(a);
+            const daysB = getDaysLeft(b);
+
+            // Handle Expired/Invalid data
+            if (daysA === -1 && daysB !== -1) return sortValue === 'newest' ? 1 : -1; // Expired always last for 'newest'
+            if (daysB === -1 && daysA !== -1) return sortValue === 'newest' ? -1 : 1; // Expired always last for 'newest'
             
-            const timeA = dateA.getTime();
-            const timeB = dateB.getTime();
-
-            // Handle Invalid Dates (e.g., empty or unparseable cells)
-            const isInvalidA = isNaN(timeA);
-            const isInvalidB = isNaN(timeB);
-
-            if (isInvalidA && isInvalidB) return 0;
-            if (isInvalidA) return sortValue === 'newest' ? 1 : -1; // Push invalid date to the end for 'newest'
-            if (isInvalidB) return sortValue === 'newest' ? -1 : 1; // Pull valid date to the start for 'newest'
-
-            // Primary Sort: Newest vs. Oldest
+            // "Most Recent" means CLOSEST TO EXPIRATION (lowest days left)
             if (sortValue === 'newest') {
-                return timeB - timeA; // B - A results in descending (newest first)
+                return daysA - daysB; // Ascending: 1, 2, 3... (closest to 1 is newest/most urgent)
             } else {
-                return timeA - timeB; // A - B results in ascending (oldest first)
+                // "Oldest" means FURTHEST FROM EXPIRATION (highest days left)
+                return daysB - daysA; // Descending: 30, 29, 28... (closest to 30 is oldest)
             }
         });
     }
@@ -483,7 +511,7 @@ function reapplyStriping() {
 }
 
 // --- 6. Reset Button ---
-function resetFilters() {
+window.resetFilters = function() { // Make global for HTML onclick
     document.getElementById('statusSelect').value = 'all';
     document.getElementById('typeSelect').value = 'all'; 
     document.getElementById('sortSelect').value = 'newest';
