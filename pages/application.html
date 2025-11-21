@@ -23,40 +23,42 @@
         <div class="card main-card">
           <div class=" table-container">
            
-            <div class="table-data">
-            <div class="table-header">
-              <div class="table-cell"><p>Applications</p></div>
-              <div class="table-cell"><p> Status</p></div>
-              <div class="table-cell"> <p>Due Date</p></div>
-              <div class="table-cell"><p>Days Left </p></div>
-            </div>
-            <div class="table-body">
-              <div class="table-row">
-                <div class="table-cell"><a href="#">Application #1</a></div>
-                <div class="table-cell"><span class="status-badge acknowledged">Acknowledged</span></div>
-                <div class="table-cell"><span>Nov 12, 2025</span></div>
-                <div class="table-cell"><span>19 days left</span></div>
-              </div>
-              <div class="table-row">
-                <div class="table-cell"><a href="#">Application #2</a></div>
-                <div class="table-cell"><span class="status-badge denied">Denied</span></div>
-                <div class="table-cell"><span>Nov 12, 2025</span></div>
-                <div class="table-cell"><span>19 days left</span></div>
-              </div>
-              <div class="table-row">
-                <div class="table-cell"><a href="#">Application #3</a></div>
-                <div class="table-cell"><span class="status-badge approved">Approved</span></div>
-                <div class="table-cell"><span>Nov 12, 2025</span></div>
-                <div class="table-cell"><span>19 days left</span></div>
-              </div>
-              <div class="table-row">
-                <div class="table-cell"><a href="#">Application #4</a></div>
-                <div class="table-cell"><span class="status-badge followup">Follow-up</span></div>
-                <div class="table-cell"><span>Nov 12, 2025</span></div>
-                <div class="table-cell"><span>19 days left</span></div>
-              </div>
-            </div>
-          </div>
+            <table class="application-table">
+              <thead>
+                  <tr>
+                      <th>Applications</th>
+                      <th>Status</th>
+                      <th>Due Date</th>
+                      <th>Days Left</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td><a href="#">Application #1</a></td>
+                      <td><span class="status acknowledged">Acknowledged</span></td>
+                      <td>Nov 12, 2025</td>
+                      <td>19 days left</td>
+                  </tr>
+                  <tr>
+                      <td><a href="#">Application #2</a></td>
+                      <td><span class="status denied">Denied</span></td>
+                      <td>Nov 12, 2025</td>
+                      <td>19 days left</td>
+                  </tr>
+                  <tr>
+                      <td><a href="#">Application #3</a></td>
+                      <td><span class="status approved">Approved</span></td>
+                      <td>Nov 12, 2025</td>
+                      <td>19 days left</td>
+                  </tr>
+                  <tr>
+                      <td><a href="#">Application #4</a></td>
+                      <td><span class="status follow-up">Follow-up</span></td>
+                      <td>Nov 12, 2025</td>
+                      <td>19 days left</td>
+                  </tr>
+              </tbody>
+          </table>
         </div>
         <nav class="pagination-container" aria-label="Page navigation">
           <ul class="pagination">
@@ -275,8 +277,7 @@
                     <label class="field-label-small">Date: <span class="required">*</span></label>
                     <div style="position: relative;">
                       <input type="date" placeholder="Enter the Date">
-                      <!-- <i class="fa-regular fa-calendar" style="position: absolute; right: 12px; top: 14px; color: #111;"></i> -->
-                    </div>
+                      </div>
                   </div>
                   <div>
                     <label class="field-label-small">ATTN: <span class="required">*</span></label>
