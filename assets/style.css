@@ -649,13 +649,11 @@ DATE RANGE FILTER POPUP & CALENDAR STYLES
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    /* Applied variable */
     font-weight: var(--font-weight-bold);
-    color: var(--rui-text-main);
-    /* Applied variable */
+    color: var(--color-text-dark);
     font-family: var(--font-main); 
     border-right: 1px solid var(--border-color); 
-
+    font-size: var(--font-size-md);
 }
 
 .filter-dropdown-toggle.active .arrow-icon {
