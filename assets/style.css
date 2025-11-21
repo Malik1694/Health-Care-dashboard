@@ -60,14 +60,14 @@
     --border-medium: #cbd5e1;
     --border-light: #ebebeb;
 
-    /* --- Typography Weights (NEW) --- */
+    /* --- Typography Weights  --- */
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
     --font-weight-black: 800;
 
 
-    /* --- Typography Sizes (NEW) --- */
+    /* --- Typography Sizes --- */
     --font-size-xxs: 0.6rem;
     --font-size-xs: 0.75rem;
     --font-size-sm: 0.8125rem;
@@ -607,7 +607,6 @@ a {
 }
 
 table {
-    width: 100%;
     border-collapse: collapse;
 }
 
@@ -814,7 +813,7 @@ span#dateRangeDisplay {
     border-bottom-left-radius: 0;
 }
 .calendar-grid td.start-date.end-date {
-    border-radius: 50%;
+    border-radius: 23%;
 }
 
 
@@ -903,16 +902,19 @@ ACTION BUTTONS (Clear/Apply)
 
     .status-card, .activity-card { padding: 20px; }
     .main-content .card.main-card { display: grid; }
-    th { 
-        padding: 14px 18px; 
+    .applicationTable th { 
+        padding: 14px 18px !important; 
         font-size: var(--font-size-lg) ; 
         /* Applied variable */
         font-weight: var(--font-weight-bold); 
     }
-    td {
+    .applicationTable td {
         padding: 26px 20px !important;
         font-size: var(--font-size-md);
         font-weight: var(--font-weight-medium);
+    }
+    
+    .table-container table {
     }
 }
 
@@ -933,13 +935,13 @@ ACTION BUTTONS (Clear/Apply)
         width: -webkit-fill-available;
     }
 
-    th {
+    .applicationTable th {
         padding: 25px 7px !important;
         font-size: var(--font-size-md) !important;
         /* Applied variable */
         font-weight: var(--font-weight-bold);
     }
-    td {
+    .applicationTable td {
         padding: 25px 7px !important;
         font-size: var(--font-size-sm) ;
         /* Applied variable */
@@ -950,6 +952,9 @@ ACTION BUTTONS (Clear/Apply)
         justify-content: space-between;
         flex-flow: wrap;
         max-width: 100%;
+    }
+    .table-container table {
+        /* min-width: max-content; */
     }
 }
 
@@ -1032,7 +1037,6 @@ ACTION BUTTONS (Clear/Apply)
     .date { 
         font-size: var(--font-size-table-mobile); 
         margin-bottom: 6px; 
-        /* Applied variable */
         font-weight: var(--font-weight-medium);
     }
 
@@ -1055,7 +1059,6 @@ ACTION BUTTONS (Clear/Apply)
         padding: 10px 14px;
         flex-shrink: 0;
         border-radius: 20px;
-        /* Applied variable */
         font-weight: var(--font-weight-bold);
     }
 
@@ -1077,7 +1080,6 @@ ACTION BUTTONS (Clear/Apply)
         border-right: none;
         padding: 16px 40px 16px 16px;
         font-size: var(--font-size-sm);
-        /* Applied variable */
         font-weight: var(--font-weight-bold);
     }
     .iconoir { display: none !important; }
@@ -1085,7 +1087,6 @@ ACTION BUTTONS (Clear/Apply)
         padding: 16px; 
         justify-content: center; 
         font-size: var(--font-size-sm); 
-        /* Applied variable */
         font-weight: var(--font-weight-bold);
     }
 
@@ -1104,22 +1105,20 @@ ACTION BUTTONS (Clear/Apply)
         min-width: 250px !important;
     }
     table {
-        min-width: 650px;
+        min-width: 1130px;
     }
-    th{ 
+    .applicationTable th{ 
         padding: 25px 8px !important; 
         font-size: var(--font-size-md); 
-        /* Applied variable */
         font-weight: var(--font-weight-bold);
     }
-    td { 
+    .applicationTable td { 
         padding: 25px 8px !important; 
         font-size: var(--font-size-xs)!important; 
-        /* Applied variable */
         font-weight: var(--font-weight-medium);
     }
-    th:first-child, td:first-child { padding-left: 16px; }
-    th:last-child, td:last-child { padding-right: 16px; }
+    .applicationTable th:first-child, td:first-child { padding-left: 16px; }
+    .applicationTable th:last-child, td:last-child { padding-right: 16px; }
 
     .badge { 
         font-size: var(--font-size-badge-mobile); 
@@ -1156,11 +1155,9 @@ ACTION BUTTONS (Clear/Apply)
     .status-label {
         font-size: var(--font-size-xs);
         width: auto;
-        /* Applied variable */
         font-weight: var(--font-weight-bold);
     }
     .status-item {
-        flex-direction: column;
         align-items: flex-start;
     }
     .applications .custom-status-list {
@@ -1168,7 +1165,6 @@ ACTION BUTTONS (Clear/Apply)
     }
     .text { 
         font-size: var(--font-size-xs); 
-        /* Applied variable */
         font-weight: var(--font-weight-semibold);
     }
     .select-wrapper select { 
@@ -1185,14 +1181,14 @@ ACTION BUTTONS (Clear/Apply)
         position: absolute;
         /* top: calc(100% + 5px); */
         right: 0;
-        left: -97px;
+        /* left: -97px; */
         z-index: 9999;
         background: white;
         border: 1px solid var(--rui-border-color);
         box-shadow: var(--rui-box-shadow);
         border-radius: 8px;
         padding: 10px;
-        min-width: 296px;
+        min-width: 335px;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -1212,7 +1208,6 @@ ACTION BUTTONS (Clear/Apply)
     text-align: center;
     padding: 8px 0 !important;
     color: var(--rui-text-muted);
-    /* Applied variable (using medium) */
     font-weight: var(--font-weight-medium);
     text-transform: uppercase;
     font-size: 0.8rem;
@@ -1230,7 +1225,6 @@ ACTION BUTTONS (Clear/Apply)
     transition: background-color 0.1s;
     border: none !important;
     background-color: white !important;
-    /* Applied variable (using medium for regular days) */
     font-weight: var(--font-weight-medium);
 }
 
@@ -1249,7 +1243,6 @@ ACTION BUTTONS (Clear/Apply)
 .calendar-grid td.end-date {
     background-color: var(--rui-primary-color) !important;
     color: white;
-    /* Applied variable (using bold for selected dates) */
     font-weight: var(--font-weight-bold); 
     border-radius: 50%;
     position: relative;
@@ -1264,7 +1257,6 @@ ACTION BUTTONS (Clear/Apply)
     z-index: 1;
 }
 
-/* --- Range Edge Correction (No font changes) --- */
 .calendar-grid td.start-date {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -1274,13 +1266,15 @@ ACTION BUTTONS (Clear/Apply)
     border-bottom-left-radius: 0;
 }
 .calendar-grid td.start-date.end-date {
-    border-radius: 50%;
+    border-radius: 23%;
 }
+
 .filter-dropdown-toggle {
     background: none;
     border: none;
     padding: 25px 11px;
     width: 100%;
+    font-size: var(--font-size-sm);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1291,4 +1285,29 @@ ACTION BUTTONS (Clear/Apply)
     border-right: 1px solid var(--border-color);
 }
 
+}
+
+@media screen and (max-width: 320px) {
+
+
+    .filter-popover {
+        position: absolute;
+        /* top: calc(100% + 5px); */
+        right: 0;
+        /* left: -97px; */
+        z-index: 9999;
+        background: white;
+        border: 1px solid var(--rui-border-color);
+        box-shadow: var(--rui-box-shadow);
+        border-radius: 8px;
+        padding: 10px;
+        min-width: 293px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-family: var(--font-main);
+    }
+    table {
+        min-width: 1120px !important;
+    }
 }
