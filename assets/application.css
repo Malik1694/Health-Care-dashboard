@@ -146,7 +146,6 @@ body {
 
 /* List of Applications Table */
 .table-container {
-  border: 1px solid var(--color-border-light);
   border-radius: var(--var-radius-12px);
   margin-bottom: var(--var-spacing-24px);
 }
@@ -1432,13 +1431,14 @@ input[type="text"] {
 
 .log-subtext {
   font-size: var(--var-font-size-11px); /* 11px */
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   color: #111;
   margin: 0 0 2px 0;
+  font-family: var(--font-heading);
 }
 
 .log-status {
-  font-size: var(--var-font-size-10px); /* 10px */
+  font-size: var(--var-font-size-11px); /* 10px */
   font-style: italic;
   font-family: var(--font-heading);
   color: var(--color-light-gray-text);
